@@ -1,0 +1,28 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#8076
+    [34mall[39m: [
+      [34;4mApp\Models\Disponibilidade[39;24m {#8074
+        [34mid[39m: [35m1[39m,
+        [34mbarbeiro_id[39m: [35m1[39m,
+        [34mdia_semana[39m: [35m1[39m,
+        [34minicio[39m: [32m"[39m[32m08:00:00[39m[32m"[39m,
+        [34mfim[39m: [32m"[39m[32m18:00:00[39m[32m"[39m,
+        [34mintervalo[39m: [35m30[39m,
+        [34mativo[39m: [35m1[39m,
+        [34mcreated_at[39m: [32m"[39m[32m2026-05-20 23:26:15[39m[32m"[39m,
+        [34mupdated_at[39m: [32m"[39m[32m2026-05-21 21:59:36[39m[32m"[39m,
+        [34mbarbearia_id[39m: [35m1[39m,
+      },
+      [34;4mApp\Models\Disponibilidade[39;24m {#8073
+        [34mid[39m: [35m2[39m,
+        [34mbarbeiro_id[39m: [35m3[39m,
+        [34mdia_semana[39m: [35m1[39m,
+        [34minicio[39m: [32m"[39m[32m08:00:00[39m[32m"[39m,
+        [34mfim[39m: [32m"[39m[32m18:00:00[39m[32m"[39m,
+        [34mintervalo[39m: [35m30[39m,
+        [34mativo[39m: [35m1[39m,
+        [34mcreated_at[39m: [32m"[39m[32m2026-05-21 01:23:37[39m[32m"[39m,
+        [34mupdated_at[39m: [32m"[39m[32m2026-05-21 21:59:36[39m[32m"[39m,
+        [34mbarbearia_id[39m: [35m1[39m,
+      },
+    ],
+  }
