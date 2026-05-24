@@ -12,10 +12,9 @@ class Agendamento extends Model
     protected $fillable = [
         'barbeiro_id',
         'barbearia_id',
-        'nome_cliente',
-        'telefone_cliente',
         'inicio',
         'fim',
+        'cliente_id'
     ];
 
     protected $casts = [

@@ -14,7 +14,6 @@ class Disponibilidade extends Model
         'dia_semana',
         'inicio',
         'fim',
-        'intervalo',
         'ativo',
         'barbearia_id'
     ];
