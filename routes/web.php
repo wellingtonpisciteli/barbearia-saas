@@ -34,7 +34,7 @@ Route::prefix('cliente')->group(function () {
     )->name('cliente.disponibilidade');
 
     Route::get(
-        '/cliente/disponibilidade/{slug}/{user}/{date?}',
+        '/disponibilidade/{slug}/{user}/{date?}',
         [AgendaController::class, 'show']
     )->name('cliente.agenda');
 

@@ -1,112 +1,224 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet"
+>
 
 <h1 class="mb-4">
     Agenda de {{ $user->name }}
 </h1>
 
-@foreach($disponibilidades as $disp)
-
-<div class="mb-4 p-3 border rounded">
+<div class="mb-4">
 
     <h2 class="fs-5">
-        {{ \Carbon\Carbon::today()->translatedFormat('l • d/m') }}
+        {{ $data->translatedFormat('l • d/m') }}
     </h2>
-
-    <p>
-        <strong>Funcionamento:</strong>
-        {{ $disp->inicio }} às {{ $disp->fim }}
-    </p>
 
     <hr>
 
     <div class="row g-2">
 
-        @php
-            $inicio = \Carbon\Carbon::parse($disp->inicio);
-            $fim = \Carbon\Carbon::parse($disp->fim);
-        @endphp
+        @forelse($horarios as $h)
 
-        @while($inicio < $fim)
+        <div class="col-4">
 
-            @php
-                $horaAtual = $inicio->format('H:i');
-                $ocupado = in_array($horaAtual, $agendados);
-            @endphp
+            <button
+                type="button"
 
-            <div class="col-4">
+                class="
+                btn
+                w-100
 
-                <button
-                    type="button"
-                    class="btn w-100 {{ $ocupado ? 'btn-secondary' : 'btn-dark' }}"
-                    data-bs-toggle="modal"
-                    data-bs-target="#agendarModal"
-                    onclick="setHorario('{{ $horaAtual }}')"
-                    {{ $ocupado ? 'disabled' : '' }}
-                >
-                    {{ $horaAtual }}
-                </button>
+                {{
+                    $h['ocupado']
+                    ? 'btn-secondary'
+                    : 'btn-dark'
+                }}
+                "
 
-            </div>
+                data-bs-toggle="modal"
+                data-bs-target="#agendarModal"
 
-            @php
-                $inicio->addMinutes($disp->intervalo);
-            @endphp
+                onclick="
+                setHorario(
+                    '{{ $h['inicio'] }}',
+                    '{{ $h['fim'] }}'
+                )
+                "
 
-        @endwhile
+                {{
+                    $h['ocupado']
+                    ? 'disabled'
+                    : ''
+                }}
+            >
+
+                {{ $h['inicio'] }}
+
+            </button>
+
+        </div>
+
+        @empty
+
+            <p>
+                Nenhum horário disponível
+            </p>
+
+        @endforelse
 
     </div>
 
 </div>
 
-@endforeach
 
 {{-- MODAL --}}
-<div class="modal fade" id="agendarModal" tabindex="-1">
+
+<div
+class="modal fade"
+id="agendarModal"
+tabindex="-1"
+>
+
     <div class="modal-dialog">
+
         <div class="modal-content">
 
-            <form action="{{ route('cliente.agendar') }}" method="POST">
+            <form
+                action="{{ route('cliente.agendar') }}"
+                method="POST"
+            >
+
                 @csrf
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Confirmar Agendamento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+                    <h5 class="modal-title">
+                        Confirmar Agendamento
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    >
+                    </button>
+
                 </div>
+
 
                 <div class="modal-body">
 
-                    <input type="hidden" name="slug" value="{{ $barbearia->slug }}">
-                    <input type="hidden" name="user_id" value="{{ $user->id }}">
-                    <input type="hidden" name="horario" id="horarioSelecionado">
+                    <input
+                    type="hidden"
+                    name="slug"
+                    value="{{ $barbearia->slug }}"
+                    >
+
+                    <input
+                    type="hidden"
+                    name="user_id"
+                    value="{{ $user->id }}"
+                    >
+
+                    <input
+                    type="hidden"
+                    name="inicio"
+                    id="horarioSelecionado"
+                    >
+
+                    <input
+                    type="hidden"
+                    name="fimServico"
+                    id="fimSelecionado"
+                    >
+
 
                     <div class="mb-3">
-                        <label class="form-label">Nome</label>
-                        <input type="text" name="nome_cliente" class="form-control" required>
+
+                        <label class="form-label">
+                            Nome
+                        </label>
+
+                        <input
+                        type="text"
+                        name="nome_cliente"
+                        class="form-control"
+                        required
+                        >
+
                     </div>
 
+
                     <div class="mb-3">
-                        <label class="form-label">Telefone</label>
-                        <input type="text" name="telefone_cliente" class="form-control" required>
+
+                        <label class="form-label">
+                            Telefone
+                        </label>
+
+                        <input
+                        type="text"
+                        name="telefone_cliente"
+                        class="form-control"
+                        required
+                        >
+
                     </div>
 
                 </div>
 
+
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success w-100">
+
+                    <button
+                    type="submit"
+                    class="
+                    btn
+                    btn-success
+                    w-100
+                    "
+                    >
+
                         Confirmar agendamento
+
                     </button>
+
                 </div>
 
             </form>
 
         </div>
+
     </div>
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js
+"></script>
+
 
 <script>
-    function setHorario(horario) {
-        document.getElementById('horarioSelecionado').value = horario;
-    }
+
+function setHorario(
+    inicio,
+    fim
+){
+
+    document
+    .getElementById(
+        'horarioSelecionado'
+    )
+    .value =
+    inicio;
+
+
+    document
+    .getElementById(
+        'fimSelecionado'
+    )
+    .value =
+    fim;
+}
+
 </script>

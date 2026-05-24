@@ -16,6 +16,7 @@ class Disponibilidade extends Model
         'fim',
         'intervalo',
         'ativo',
+        'barbearia_id'
     ];
 
     public function barbearia()
