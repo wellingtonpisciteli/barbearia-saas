@@ -13,6 +13,7 @@ use App\Models\Servico;
 use App\Models\Cliente;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Auth;
 
 class AgendaController extends Controller
 {
@@ -24,23 +25,47 @@ class AgendaController extends Controller
 
         $servicos = Servico::where('barbearia_id', $barbearia->id)->where('ativo', true)->get();
 
+        $token = request()->cookie('cliente_token');
+        $cliente = Cliente::where('token', $token)->first();
+
+        $agendamentoCliente = null;
+
+        if($cliente){
+            $agendamentoCliente =
+                Agendamento::where(
+                    'cliente_id',
+                    $cliente->id
+                )
+                ->where(
+                    'status',
+                    'confirmado'
+                )
+                ->first();
+        }
+
         return view('cliente.disponibilidade.index',
             compact(
                 'barbeiros',
                 'barbearia',
-                'servicos'
+                'servicos',
+                'agendamentoCliente',
+                'cliente'
             )
         );
     }
 
     public function show(Request $request, string $slug, User $user, $date = null)
     {
+        $status = "";
         $servico_id = $request->servico_id;
         $servico = Servico::findOrFail($servico_id);
         $duracao = $servico->duracao;
 
         $token = request()->cookie('cliente_token');
         $cliente = Cliente::where('token', $token)->first();
+        if($cliente){
+            $status = Agendamento::where('cliente_id', $cliente->id)->orderByDesc('id')->value('status');
+        }
 
         $data = $date ? Carbon::parse($date) : Carbon::today();
 
@@ -59,6 +84,7 @@ class AgendaController extends Controller
         // Busca os horários ocupados do barbeiro
         $agendados = Agendamento::where('barbeiro_id', $user->id)
             ->whereDate('inicio', $data)
+            ->where('status', 'confirmado')
             ->get()
             // Transforma string em objeto de data (Carbon)
             ->map(fn($a)=>[
@@ -93,10 +119,25 @@ class AgendaController extends Controller
             }
         }
 
-        return view('cliente.disponibilidade.agenda',
+        if($status == 'confirmado'){
+            return redirect()->route(
+                'cliente.disponibilidade',
+                $slug
+            );
+        }
+
+        return view(
+            'cliente.disponibilidade.agenda',
             compact(
-                'user', 'barbearia', 'horarios', 'data', 'cliente')
+                'user',
+                'barbearia',
+                'horarios',
+                'data',
+                'cliente',
+                'status'
+            )
         );
+        
     }
 
     public function store(Request $request)
@@ -111,7 +152,7 @@ class AgendaController extends Controller
         $token = $request->cookie('cliente_token');
         $cliente = Cliente::where('token', $token)->first();
 
-        if (!$cliente) {
+        if (!$cliente){
             $cliente = Cliente::create([
                 'barbearia_id' => $barbearia->id,
                 'nome' => $request->nome_cliente,
@@ -126,9 +167,10 @@ class AgendaController extends Controller
         $fim = Carbon::parse($request->fimServico);
 
         // bloqueio seguro
-        $existe = Agendamento::where('barbeiro_id', $request->barbeiro_id)
+        $existe = Agendamento::where('barbeiro_id', $request->user_id)
             ->where('inicio', '<', $fim)
             ->where('fim', '>', $inicio)
+            ->where('status', 'confirmado')
             ->exists();
 
         if ($existe) {
@@ -143,6 +185,25 @@ class AgendaController extends Controller
             'cliente_id' => $cliente->id,
         ]);
 
-        return back()->with('success', 'Agendamento realizado com sucesso!');
+        return redirect()->route('cliente.disponibilidade', $request->slug);
+    }
+
+    public function cancelar(Request $request, int $id)
+    {
+        $agendamento = Agendamento::findOrFail($id);
+
+        $token = $request->cookie('cliente_token');
+
+        $cliente = Cliente::where('token', $token)->first();
+
+        if (!$cliente || $agendamento->cliente_id != $cliente->id) {
+            abort(403);
+        }
+
+        $agendamento->update([
+            'status' => 'cancelado'
+        ]);
+
+        return back()->with('success', 'Agendamento cancelado');
     }
 }

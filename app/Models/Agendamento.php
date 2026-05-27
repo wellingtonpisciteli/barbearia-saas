@@ -14,7 +14,8 @@ class Agendamento extends Model
         'barbearia_id',
         'inicio',
         'fim',
-        'cliente_id'
+        'cliente_id',
+        'status'
     ];
 
     protected $casts = [

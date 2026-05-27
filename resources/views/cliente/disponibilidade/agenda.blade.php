@@ -15,7 +15,7 @@ rel="stylesheet"
 
     <hr>
 
-    @if($cliente)
+    @if($cliente && $status == 'confirmado')
         <div class="alert alert-success">
             Olá, {{ $cliente->nome }} 👋
         </div>
@@ -80,8 +80,7 @@ rel="stylesheet"
                     <input type="hidden" name="fimServico" id="fimSelecionado">
 
                     {{-- CLIENTE NÃO EXISTE AINDA --}}
-                    @if(!$cliente)
-
+                    @if(!$cliente || $status == 'cancelado')
                         <div class="mb-3">
                             <label class="form-label">Nome</label>
                             <input type="text" name="nome_cliente" class="form-control" required>
@@ -91,14 +90,11 @@ rel="stylesheet"
                             <label class="form-label">Telefone</label>
                             <input type="text" name="telefone_cliente" class="form-control" required>
                         </div>
-
                     @else
-
                         <div class="alert alert-info">
                             Agendando como:
                             <strong>{{ $cliente->nome }}</strong>
                         </div>
-
                     @endif
 
                 </div>

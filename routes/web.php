@@ -39,8 +39,12 @@ Route::prefix('cliente')->group(function () {
     )->name('cliente.agenda');
 
     Route::post(
-        '/cliente/agendar',
+        '/agendar',
         [AgendaController::class, 'store']
     )->name('cliente.agendar');
 
+    Route::post(
+        '/{id}/cancelar',
+        [AgendaController::class, 'cancelar']
+    )->name('cliente.cancelar');
 });
