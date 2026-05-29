@@ -1,41 +1,120 @@
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet"
->
+@extends('layouts.app')
 
-<div class="container mt-4">
+@section('title', 'Agendamento')
 
-    {{-- CLIENTE TEM AGENDAMENTO --}}
+@section('content')
+
+<div class="container py-4">
+
+    {{-- TOPO --}}
+    <div class="topbar mb-4">
+
+        <div class="text-center">
+
+            <img
+                src="{{ asset('img/logo.png') }}"
+                alt="Logo"
+                class="logo mb-5"
+            >
+
+            <h2 class="fw-bold mb-1">
+                @if(!$cliente)
+                    Seja bem vindo ao FadeOS
+                @else
+                    Seja bem vindo, {{ $cliente->nome }}
+                @endif
+            </h2>
+
+            <p class="text-secondary mb-0">
+                Escolha seu barbeiro e agende seu horário
+            </p>
+
+        </div>
+
+    </div>
+
+    {{-- CLIENTE POSSUI AGENDAMENTO --}}
     @if($agendamentoCliente && $agendamentoCliente->status == 'confirmado')
 
-        <div class="alert alert-success">
-            <h3>Olá, seja bem vindo {{ $cliente->nome }} </h3>
-            <h4>Você já possui um agendamento</h4>
+        <div class="schedule-card success-card">
 
-            <p>
-                Data:
-                {{ $agendamentoCliente->inicio->format('d/m/Y H:i') }}
-            </p>
+            <div class="d-flex justify-content-between align-items-start mb-3">
 
-            <p>
-                Barbeiro:
-                {{ $agendamentoCliente->barbeiro->name }}
-            </p>
+                <div>
 
-            <p>
-                Status:
-                {{ $agendamentoCliente->status }}
-            </p>
+                    <small class="text-gold">
+                        AGENDAMENTO CONFIRMADO
+                    </small>
 
+                    <h4 class="fw-bold mt-1">
+                        Olá, {{ $cliente->nome }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+            <div class="schedule-info">
+
+                <div class="info-item">
+
+                    <small>
+                        Data
+                    </small>
+
+                    <strong>
+                        {{ $agendamentoCliente->inicio->format('d/m/Y') }}
+                    </strong>
+
+                </div>
+
+                <div class="info-item">
+
+                    <small>
+                        Horário
+                    </small>
+
+                    <strong>
+                        {{ $agendamentoCliente->inicio->format('H:i') }}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <small>
+                        Barbeiro
+                    </small>
+
+                    <strong>
+                        {{ $agendamentoCliente->barbeiro->name }}
+                    </strong>
+
+                </div>
+
+                <div class="info-item">
+
+                    <small>
+                        Serviço
+                    </small>
+
+                    <strong>
+                        {{ $agendamentoCliente->servico->nome ?? 'Serviço' }}                    
+                    </strong>
+
+                </div>
+
+            </div>
 
             <form
                 action="{{ route('cliente.cancelar', $agendamentoCliente->id) }}"
-                method="POST">
+                method="POST"
+                class="mt-4">
 
                 @csrf
 
-                <button
-                    class="btn btn-danger">
+                <button class="btn btn-danger-custom w-100">
 
                     Cancelar agendamento
 
@@ -47,64 +126,91 @@ rel="stylesheet"
 
     @else
 
-        {{-- MOSTRA BARBEIROS NORMALMENTE --}}
-        <h1 class="mb-4">
-            Selecione o barbeiro
-        </h1>
+        {{-- LISTAGEM BARBEIROS --}}
+        <div class="row g-3">
 
-        @foreach($barbeiros as $barbeiro)
+            @foreach($barbeiros as $barbeiro)
 
-            <div class="card mb-3">
+                <div class="col-lg-4 col-md-6">
 
-                <div class="card-body">
+                    <div class="barber-card">
 
-                    <p>
-                        <strong>Nome:</strong>
-                        {{ $barbeiro->name }}
-                    </p>
+                        <div class="d-flex align-items-center mb-3">
 
-                    <form
-                    method="GET"
-                    action="{{ route('cliente.agenda', [
-                        'slug'=>$barbearia->slug,
-                        'user'=>$barbeiro->id
-                    ]) }}">
+                            <div class="avatar me-3">
 
-                        <h5>
-                            Escolha o serviço
-                        </h5>
+                                {{ strtoupper(substr($barbeiro->name, 0, 1)) }}
 
-                        <select
-                            name="servico_id"
-                            class="form-select"
-                            required>
+                            </div>
 
-                            @foreach($servicos as $s)
+                            <div>
 
-                                <option value="{{ $s->id }}">
-                                    {{ $s->nome }}
-                                    ({{ $s->duracao }} min)
-                                </option>
+                                <h5 class="fw-bold mb-0">
+                                    {{ $barbeiro->name }}
+                                </h5>
 
-                            @endforeach
+                                <small class="text-secondary">
+                                    Barbeiro profissional
+                                </small>
 
-                        </select>
+                            </div>
 
-                        <button
-                            class="btn btn-dark mt-3">
+                        </div>
 
-                            Ver agenda
+                        <form
+                            method="GET"
+                            action="{{ route('cliente.agenda', [
+                                'slug' => $barbearia->slug,
+                                'user' => $barbeiro->id
+                            ]) }}">
 
-                        </button>
+                            <label class="form-label small text-secondary mb-2">
 
-                    </form>
+                                Serviço
+
+                            </label>
+
+                            <select
+                                name="servico_id"
+                                class="form-select custom-select"
+                                required>
+
+                                @foreach($servicos as $s)
+
+                                    <option value="{{ $s->id }}">
+
+                                        {{ $s->nome }}
+                                        •
+                                        {{ $s->duracao }} min
+
+                                    </option>
+
+                                @endforeach
+
+                            </select>
+
+                            <button
+                                class="btn btn-gold w-100 mt-3">
+
+                                Ver agenda
+
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 
-            </div>
+            @endforeach
 
-        @endforeach
+        </div>
 
     @endif
 
 </div>
+
+@include('components.footer')
+
+@endsection
+

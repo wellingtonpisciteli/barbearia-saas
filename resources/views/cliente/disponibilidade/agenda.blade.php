@@ -80,7 +80,7 @@ rel="stylesheet"
                     <input type="hidden" name="fimServico" id="fimSelecionado">
 
                     {{-- CLIENTE NÃO EXISTE AINDA --}}
-                    @if(!$cliente || $status == 'cancelado')
+                    @if(!$cliente || $status == 'cancelado' or $status == 'finalizado')
                         <div class="mb-3">
                             <label class="form-label">Nome</label>
                             <input type="text" name="nome_cliente" class="form-control" required>

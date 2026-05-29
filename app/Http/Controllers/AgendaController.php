@@ -20,13 +20,20 @@ class AgendaController extends Controller
     public function index(string $slug)
     {
         $barbearia = Barbearia::where('slug', $slug)->firstOrFail();
-
         $barbeiros = User::where('barbearia_id', $barbearia->id)->get();
 
         $servicos = Servico::where('barbearia_id', $barbearia->id)->where('ativo', true)->get();
 
         $token = request()->cookie('cliente_token');
         $cliente = Cliente::where('token', $token)->first();
+
+        if ($cliente) {
+            $agendamentos = Agendamento::where('cliente_id', $cliente->id)->where('status', 'confirmado')->get();
+
+            foreach ($agendamentos as $agendamento){
+                $this->verificarAgendamento($agendamento);
+            }
+        }
 
         $agendamentoCliente = null;
 
@@ -57,12 +64,15 @@ class AgendaController extends Controller
     public function show(Request $request, string $slug, User $user, $date = null)
     {
         $status = "";
+
         $servico_id = $request->servico_id;
         $servico = Servico::findOrFail($servico_id);
+
         $duracao = $servico->duracao;
 
         $token = request()->cookie('cliente_token');
         $cliente = Cliente::where('token', $token)->first();
+
         if($cliente){
             $status = Agendamento::where('cliente_id', $cliente->id)->orderByDesc('id')->value('status');
         }
@@ -205,5 +215,23 @@ class AgendaController extends Controller
         ]);
 
         return back()->with('success', 'Agendamento cancelado');
+    }
+
+    public function verificarAgendamento(Agendamento $agendamento)
+    {
+        $agendamentoFim = \Carbon\Carbon::parse(
+            $agendamento->data . ' ' . $agendamento->fim
+        );
+
+        if (now()->greaterThanOrEqualTo($agendamentoFim)) {
+
+            $agendamento->update([
+                'status' => 'finalizado'
+            ]);
+
+            return true;
+        }
+
+        return false;
     }
 }
