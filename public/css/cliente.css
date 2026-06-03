@@ -3,6 +3,7 @@ body{
     color: #f5f5f5;
 }
 
+
 /* LOGO */
 
 .logo{
@@ -181,7 +182,6 @@ body{
 }
 
 /* CANCELAR */
-
 .btn-danger-custom{
 
     background: #dc3545;
@@ -267,4 +267,198 @@ body{
     text-align: center;
 
     color: #777;
+}
+
+/* CSS DA AGENDA */
+.agenda-header hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, #222, #ffffff, #222); /* degrade elegante */
+    margin: 1rem 0 2rem 0;
+    border-radius: 1px;
+}
+
+.servico-card{
+
+    background: #121212;
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    border-radius: 18px;
+
+    padding: 18px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.servico-card strong{
+
+    color: #f5f5f5;
+
+    font-size: 1.05rem;
+}
+
+.servico-duracao{
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    color: #d8d8d8;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    font-size: .85rem;
+}
+
+.agenda-header {
+    margin-bottom: 24px;
+}
+
+.agenda-title {
+    color: #ffffff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 0;
+}
+
+.agenda-subtitle {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+.horarios-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+}
+
+.btn-time{
+
+    background: #121212;
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    border-radius: 14px;
+
+    color: #f5f5f5;
+
+    padding: 14px;
+
+    font-weight: 600;
+
+    transition: .2s ease;
+
+    width: 100%;
+}
+
+.btn-time:hover{
+
+    background: #181818;
+
+    border-color:
+        rgba(255,255,255,.12);
+
+    transform: translateY(-2px);
+}
+
+.btn-time:disabled{
+
+    background: #0f0f0f;
+
+    color: darkslategray;
+
+    border-color:
+        rgba(255,255,255,.03);
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.empty-horarios{
+
+    text-align: center;
+
+    color: #8b8b8b;
+
+    padding: 30px;
+
+    border:
+        1px dashed rgba(255,255,255,.08);
+
+    border-radius: 16px;
+}
+
+.btn-nav {
+    border: 1px solid #3a3a3a;
+    color: #bdbdbd;
+    background: transparent;
+}
+
+.btn-nav:hover {
+    background: #1f1f1f;
+    border-color: #555;
+    color: #fff;
+}
+
+
+/* MODAL DE INPUTS DE AGENDAMENTO */
+.modal-dark {
+    background: #121212;
+    border: 1px solid rgba(255,255,255,.08);
+    color: #f5f5f5;
+    border-radius: 16px;
+}
+
+.modal-dark .modal-header {
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.modal-dark .modal-title {
+    color: #f5f5f5;
+    font-weight: 600;
+}
+
+.modal-dark .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.modal-dark .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-dark .modal-body {
+    color: #e5e7eb;
+}
+
+.modal-dark .form-control {
+    background: #0f0f0f;
+    border: 1px solid rgba(255,255,255,.08);
+    color: #f5f5f5;
+}
+
+.modal-dark .form-control:focus {
+    background: #0f0f0f;
+    border-color: rgba(255,255,255,.2);
+    box-shadow: none;
+    color: #fff;
+}
+
+.modal-dark .modal-footer {
+    border-top: none;
 }

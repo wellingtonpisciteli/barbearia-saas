@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AgendaController;
-
+use App\Http\Controllers\FCMController;
 
 // =========================
 // ADM
@@ -48,3 +48,4 @@ Route::prefix('cliente')->group(function () {
         [AgendaController::class, 'cancelar']
     )->name('cliente.cancelar');
 });
+

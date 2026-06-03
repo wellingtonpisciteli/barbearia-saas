@@ -15,7 +15,8 @@ class Agendamento extends Model
         'inicio',
         'fim',
         'cliente_id',
-        'status'
+        'status',
+        'servico_id'
     ];
 
     protected $casts = [
@@ -36,5 +37,10 @@ class Agendamento extends Model
     public function barbearia()
     {
         return $this->belongsTo(Barbearia::class);
+    }
+
+    public function servico()
+    {
+        return $this->belongsTo(Servico::class);
     }
 }

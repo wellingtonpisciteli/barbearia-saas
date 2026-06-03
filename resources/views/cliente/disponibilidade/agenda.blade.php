@@ -1,129 +1,214 @@
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet"
->
+@extends('layouts.app')
 
-<h1 class="mb-4">
-    Agenda de {{ $user->name }}
-</h1>
+@section('content')
 
-<div class="mb-4">
+<div class="agenda-page">
+    <div class="container py-4">
+        <div class="agenda-header mb-4">   
+            <h1 class="agenda-title mb-1">
+                {{ $barbearia->nome }}
+            </h1>
 
-    <h2 class="fs-5">
-        {{ $data->translatedFormat('l • d/m') }}
-    </h2>
+            <h2 class="agenda-subtitle">
+                {{ $data->translatedFormat('l') }}
+            </h2>
 
-    <hr>
-
-    @if($cliente && $status == 'confirmado')
-        <div class="alert alert-success">
-            Olá, {{ $cliente->nome }} 👋
+            <hr>
         </div>
-    @endif
+        
+        <div class="schedule-card mb-4">
+            <div class="schedule-info">
+                <div class="info-item">
+                    <small>Barbeiro</small>
+                    <strong>{{ $user->name }}</strong>
+                </div>
 
-    <div class="row g-2">
+                <div class="info-item">
+                    <small>Data</small>
+                    <strong>{{ $data->format('d/m/Y') }}</strong>
+                </div>
+            </div>
+        </div>
 
-        @forelse($horarios as $h)
+        @if(isset($servico))
+            <div class="servico-card mb-4">
+                <div>
+                    <small class="text-secondary d-block mb-1">
+                        Serviço selecionado
+                    </small>
 
-        <div class="col-4">
+                    <strong>
+                        {{ $servico->nome }}
+                    </strong>
+                </div>
 
-            <button
-                type="button"
-                class="btn w-100 {{ $h['ocupado'] ? 'btn-secondary' : 'btn-dark' }}"
-                data-bs-toggle="modal"
-                data-bs-target="#agendarModal"
-                onclick="setHorario('{{ $h['inicio'] }}','{{ $h['fim'] }}')"
-                {{ $h['ocupado'] ? 'disabled' : '' }}
+                <span class="servico-duracao">
+                    {{ $servico->duracao }} min
+                </span>
+            </div>
+        @endif
+
+        {{-- CLIENTE LOGADO --}}
+        @if($cliente && $status == 'confirmado')
+            <div class="alert alert-success">
+                Olá, {{ $cliente->nome }} 👋
+            </div>
+        @endif
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a
+                href="{{ route('cliente.agenda', [
+                    'slug' => $barbearia->slug,
+                    'user' => $user->id,
+                    'date' => $data->copy()->subDay()->format('Y-m-d'),
+                    'servico_id' => request('servico_id')
+                ]) }}"
+                class="btn btn-nav"
             >
-                {{ $h['inicio'] }}
-            </button>
+                ← Anterior
+            </a>
 
+            <div class="text-center">
+                <strong>{{ $data->translatedFormat('d \d\e F') }}</strong>
+            </div>
+
+            <a
+                href="{{ route('cliente.agenda', [
+                    'slug' => $barbearia->slug,
+                    'user' => $user->id,
+                    'date' => $data->copy()->addDay()->format('Y-m-d'),
+                    'servico_id' => request('servico_id')
+                ]) }}"
+                class="btn btn-nav"
+            >
+                Próximo →
+            </a>
         </div>
+        
+        <p class="text-secondary mb-3">
+            Horários disponíveis para agendamento.
+        </p>
 
-        @empty
+        {{-- HORÁRIOS --}}
+        <div class="horarios-grid">
+            
+            @forelse($horarios as $h)
+                <button
+                    type="button"
+                    class="btn-time"
+                    data-bs-toggle="modal"
+                    data-bs-target="#agendarModal"
+                    onclick="setHorario('{{ $h['inicio'] }}','{{ $h['fim'] }}')"
+                    {{ $h['ocupado'] ? 'disabled' : '' }}
+                >
+                    {{ $h['inicio'] }}
+                </button>
 
-            <p>Nenhum horário disponível</p>
-
-        @endforelse
-
+            @empty
+                <div class="empty-horarios">
+                    Nenhum horário disponível
+                </div>
+            @endforelse
+        </div>
     </div>
 
-</div>
+    {{-- MODAL --}}
+    <div class="modal fade" id="agendarModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modal-dark">
+                <form action="{{ route('cliente.agendar') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar Agendamento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
 
+                    <div class="modal-body">
 
-{{-- MODAL --}}
-<div class="modal fade" id="agendarModal" tabindex="-1">
+                        <input type="hidden" name="slug" value="{{ $barbearia->slug }}">
+                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="servico_id" value="{{ request('servico_id') }}">
+                        <input type="hidden" name="data" value="{{ $data->format('Y-m-d') }}">
 
-    <div class="modal-dialog">
-
-        <div class="modal-content">
-
-            <form action="{{ route('cliente.agendar') }}" method="POST">
-                @csrf
-
-                <div class="modal-header">
-
-                    <h5 class="modal-title">
-                        Confirmar Agendamento
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-
-                </div>
-
-                <div class="modal-body">
-
-                    <input type="hidden" name="slug" value="{{ $barbearia->slug }}">
-                    <input type="hidden" name="user_id" value="{{ $user->id }}">
-
-                    <input type="hidden" name="inicio" id="horarioSelecionado">
-                    <input type="hidden" name="fimServico" id="fimSelecionado">
-
-                    {{-- CLIENTE NÃO EXISTE AINDA --}}
-                    @if(!$cliente || $status == 'cancelado' or $status == 'finalizado')
-                        <div class="mb-3">
-                            <label class="form-label">Nome</label>
-                            <input type="text" name="nome_cliente" class="form-control" required>
-                        </div>
+                        <input type="hidden" name="inicio" id="horarioSelecionado" value="{{ old('inicio') }}">
+                        <input type="hidden" name="fimServico" id="fimSelecionado" value="{{ old('fimServico') }}">
 
                         <div class="mb-3">
-                            <label class="form-label">Telefone</label>
-                            <input type="text" name="telefone_cliente" class="form-control" required>
+                            <label class="form-label">Horário selecionado</label>
+                            <input type="text" id="horarioPreview" class="form-control" readonly value="{{ old('inicio') && old('fimServico') ? old('inicio').' - '.old('fimServico') : '' }}">
                         </div>
-                    @else
-                        <div class="alert alert-info">
-                            Agendando como:
-                            <strong>{{ $cliente->nome }}</strong>
-                        </div>
-                    @endif
 
-                </div>
+                        {{-- CLIENTE --}}
+                        @if(!$cliente || $status == 'cancelado' || $status == 'finalizado')
 
-                <div class="modal-footer">
+                            <div class="mb-3">
+                                <label class="form-label">Nome</label>
+                                <input
+                                    type="text"
+                                    name="nome_cliente"
+                                    class="form-control @error('nome_cliente') is-invalid @enderror"
+                                    value="{{ old('nome_cliente') }}"
+                                    required
+                                >
+                                @error('nome_cliente')
+                                    <div class="invalid-feedback d-block">
+                                        {{ $message }}
+                                    </div>
+                                @enderror 
+                            </div>
 
-                    <button type="submit" class="btn btn-success w-100">
-                        Confirmar agendamento
-                    </button>
+                            <div class="mb-3">
+                                <label class="form-label">Telefone</label>
+                                <input
+                                type="text"
+                                name="telefone_cliente"
+                                class="form-control @error('telefone_cliente') is-invalid @enderror"
+                                value="{{ old('telefone_cliente') }}"
+                                required
+                            >
+                                @error('telefone_cliente')
+                                    <div class="invalid-feedback d-block">
+                                        {{ $message }}
+                                    </div>
+                                @enderror                     
+                            </div>
+                        @else
+                            <div class="alert alert-info">
+                                Agendando como:
+                                <strong>{{ $cliente->nome }}</strong>
+                            </div>
+                        @endif
+                    </div>
 
-                </div>
-
-            </form>
-
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success w-100">
+                            Confirmar agendamento
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-
     </div>
-
 </div>
 
+@endsection
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+@section('scripts')
 <script>
+    const agendarModal = new bootstrap.Modal(document.getElementById('agendarModal'));
 
-function setHorario(inicio, fim)
-{
-    document.getElementById('horarioSelecionado').value = inicio;
-    document.getElementById('fimSelecionado').value = fim;
-}
+    function setHorario(inicio, fim)
+    {
+        document.getElementById('horarioSelecionado').value = inicio;
+        document.getElementById('fimSelecionado').value = fim;
+        document.getElementById('horarioPreview').value = `${inicio} - ${fim}`;
 
+        agendarModal.show();
+    }
+
+    // Reabre o modal se houver erros de validação
+    @if ($errors->any())
+        agendarModal.show();
+    @endif
 </script>
+@endsection

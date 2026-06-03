@@ -115,9 +115,13 @@ class AgendaController extends Controller
                 if($fimSlot > $fim){
                     break;
                 }
+                
+               $ocupado = $agendados->contains(fn($a) => $inicioSlot < $a['fim'] && $fimSlot > $a['inicio']);
 
-                // InícioA < fimB E fimA > inícioB | Retorno Sim e Sim para ocupado
-                $ocupado = $agendados->contains(fn($a) => $inicioSlot < $a['fim'] && $fimSlot > $a['inicio']);
+                // Bloqueia horários passados
+                if ($inicioSlot->lte(now())) {
+                    $ocupado = true;
+                }
 
                 $horarios[] = [
                     'inicio'=>$inicioSlot->format('H:i'),
@@ -144,7 +148,8 @@ class AgendaController extends Controller
                 'horarios',
                 'data',
                 'cliente',
-                'status'
+                'status',
+                'servico'
             )
         );
         
@@ -152,17 +157,44 @@ class AgendaController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nome_cliente' => 'required',
-            'telefone_cliente' => 'required',
-        ]);
+        $request->validate(
+            [
+                'nome_cliente' => [
+                    'required',             // Não pode ficar vazio
+                    'min:4',
+                    'max:30',
+                    'regex:/^[A-Za-zÀ-ÿ\s]+$/' // Só letras e espaços
+                ],
+                'telefone_cliente' => [
+                    'required',             // Não pode ficar vazio
+                    'min:9',
+                    'max:13',
+                    'regex:/^[0-9]+$/'     // Só números
+                ],
+                'servico_id' => 'required|exists:servicos,id',
+            ],
+            [
+                'nome_cliente.required' => 'Digite um nome válido.',
+                'nome_cliente.min' => 'O nome deve ter no mínimo 4 caracteres.',
+                'nome_cliente.max' => 'O nome deve ter no máximo 30 caracteres.',
+                'nome_cliente.regex' => 'O nome não pode conter números ou caracteres especiais.',
+
+                'telefone_cliente.required' => 'Digite um telefone válido.',
+                'telefone_cliente.min' => 'O telefone deve ter no mínimo 9 caracteres.',
+                'telefone_cliente.max' => 'O telefone deve ter no máximo 13 caracteres.',
+                'telefone_cliente.regex' => 'O telefone deve conter apenas números.',
+
+                'servico_id.required' => 'Selecione um serviço.',
+                'servico_id.exists' => 'Serviço inválido.',
+            ]
+        );
 
         $barbearia = Barbearia::where('slug', $request->slug)->firstOrFail();
 
         $token = $request->cookie('cliente_token');
         $cliente = Cliente::where('token', $token)->first();
 
-        if (!$cliente){
+        if(!$cliente){
             $cliente = Cliente::create([
                 'barbearia_id' => $barbearia->id,
                 'nome' => $request->nome_cliente,
@@ -173,8 +205,15 @@ class AgendaController extends Controller
             Cookie::queue('cliente_token', $cliente->token, 60 * 24 * 30);
         }
 
-        $inicio = Carbon::parse($request->inicio);
-        $fim = Carbon::parse($request->fimServico);
+        $inicio = Carbon::parse($request->data . ' ' . $request->inicio);
+        $fim = Carbon::parse($request->data . ' ' . $request->fimServico);
+
+        if($inicio->lte(now())){
+            return back()->with(
+                'error',
+                'Este horário não está mais disponível.'
+            );
+        }
 
         // bloqueio seguro
         $existe = Agendamento::where('barbeiro_id', $request->user_id)
@@ -183,13 +222,14 @@ class AgendaController extends Controller
             ->where('status', 'confirmado')
             ->exists();
 
-        if ($existe) {
+        if($existe){
             return back()->with('error', 'Esse horário já foi reservado');
         }
 
         Agendamento::create([
             'barbearia_id' => $barbearia->id,
             'barbeiro_id' => $request->user_id,
+            'servico_id' => $request->servico_id,
             'inicio' => $inicio,
             'fim' => $fim,
             'cliente_id' => $cliente->id,

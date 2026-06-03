@@ -4,19 +4,16 @@
 
         <div class="row gy-4">
 
-            {{-- BARBEARIA --}}
+            {{-- SOBRE --}}
             <div class="col-lg-4">
 
-                <img
-                    src="{{ asset('img/logo.png') }}"
-                    alt="Logo"
-                    class="footer-logo mb-3"
-                >
+                <h6 class="footer-title">
+                    {{ $barbearia->nome }}
+                </h6>
 
                 <p class="footer-text">
 
-                    Sistema de agendamento online da
-                    {{ $barbearia->nome }}
+                    Sistema de agendamento online para clientes.
 
                 </p>
 

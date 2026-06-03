@@ -18,4 +18,9 @@ class Servico extends Model
         'ativo',
     ];
 
+    public function agendamentos()
+    {
+        return $this->hasMany(Agendamento::class);
+    }
+
 }
