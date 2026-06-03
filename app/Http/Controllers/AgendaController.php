@@ -27,10 +27,10 @@ class AgendaController extends Controller
         $token = request()->cookie('cliente_token');
         $cliente = Cliente::where('token', $token)->first();
 
-        if ($cliente) {
+        if($cliente){
             $agendamentos = Agendamento::where('cliente_id', $cliente->id)->where('status', 'confirmado')->get();
 
-            foreach ($agendamentos as $agendamento){
+            foreach($agendamentos as $agendamento){
                 $this->verificarAgendamento($agendamento);
             }
         }
@@ -39,10 +39,7 @@ class AgendaController extends Controller
 
         if($cliente){
             $agendamentoCliente =
-                Agendamento::where(
-                    'cliente_id',
-                    $cliente->id
-                )
+                Agendamento::where('cliente_id', $cliente->id)
                 ->where(
                     'status',
                     'confirmado'
@@ -119,7 +116,7 @@ class AgendaController extends Controller
                $ocupado = $agendados->contains(fn($a) => $inicioSlot < $a['fim'] && $fimSlot > $a['inicio']);
 
                 // Bloqueia horários passados
-                if ($inicioSlot->lte(now())) {
+                if($inicioSlot->lte(now())){
                     $ocupado = true;
                 }
 
@@ -134,10 +131,7 @@ class AgendaController extends Controller
         }
 
         if($status == 'confirmado'){
-            return redirect()->route(
-                'cliente.disponibilidade',
-                $slug
-            );
+            return redirect()->route('cliente.disponibilidade', $slug);
         }
 
         return view(
@@ -246,13 +240,11 @@ class AgendaController extends Controller
 
         $cliente = Cliente::where('token', $token)->first();
 
-        if (!$cliente || $agendamento->cliente_id != $cliente->id) {
+        if(!$cliente || $agendamento->cliente_id != $cliente->id){
             abort(403);
         }
 
-        $agendamento->update([
-            'status' => 'cancelado'
-        ]);
+        $agendamento->update(['status' => 'cancelado']);
 
         return back()->with('success', 'Agendamento cancelado');
     }
@@ -263,11 +255,9 @@ class AgendaController extends Controller
             $agendamento->data . ' ' . $agendamento->fim
         );
 
-        if (now()->greaterThanOrEqualTo($agendamentoFim)) {
+        if(now()->greaterThanOrEqualTo($agendamentoFim)){
 
-            $agendamento->update([
-                'status' => 'finalizado'
-            ]);
+            $agendamento->update(['status' => 'finalizado']);
 
             return true;
         }
