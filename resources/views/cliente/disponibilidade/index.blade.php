@@ -25,9 +25,15 @@
                 @endif
             </h2>
 
-            <p class="text-secondary mb-0">
-                Escolha seu barbeiro e agende seu horário
-            </p>
+            @if($agendamentoCliente && $agendamentoCliente->status == 'confirmado')
+                <p class="text-secondary mb-0">
+                    Verifique os dados do seu agendamento
+                </p>
+            @else
+                <p class="text-secondary mb-0">
+                    Escolha seu barbeiro e agende seu horário
+                </p>
+            @endif
 
         </div>
 
@@ -45,10 +51,6 @@
                     <small class="text-gold">
                         AGENDAMENTO CONFIRMADO
                     </small>
-
-                    <h4 class="fw-bold mt-1">
-                        Olá, {{ $cliente->nome }}
-                    </h4>
 
                 </div>
 
@@ -108,16 +110,19 @@
             </div>
 
             <form
+                id="formCancelarAgendamento"
                 action="{{ route('cliente.cancelar', $agendamentoCliente->id) }}"
                 method="POST"
                 class="mt-4">
 
                 @csrf
 
-                <button class="btn btn-danger-custom w-100">
-
+                <button
+                    type="button"
+                    class="btn btn-danger-custom w-100"
+                    onclick="confirmarCancelamento()"
+                >
                     Cancelar agendamento
-
                 </button>
 
             </form>
@@ -165,9 +170,7 @@
                             ]) }}">
 
                             <label class="form-label small text-secondary mb-2">
-
-                                Serviço
-
+                                Escolher serviço
                             </label>
 
                             <select
@@ -213,4 +216,49 @@
 @include('components.footer')
 
 @endsection
+
+@if($agendamentoCliente && $agendamentoCliente->status == 'confirmado')
+@section('scripts')
+<script>
+    function confirmarCancelamento()
+    {
+        Swal.fire({
+            title: 'Cancelar Agendamento',
+            html: `
+                <div>
+                    <p class="mt-3 mb-1 text-secondary">
+                        Dados do agendamento
+                    </p>
+
+                    <h5>
+                        {{ $agendamentoCliente->inicio->format('d/m/Y') }}
+                        às
+                        {{ $agendamentoCliente->inicio->format('H:i') }}
+                    </h5>
+
+                    <p class="mt-3 mb-1 text-secondary">
+                        Esta ação não poderá ser desfeita.
+                    </p>
+                </div>
+            `,
+            icon: 'warning',
+            background: '#121212',
+            color: '#ffffff',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, cancelar',
+            cancelButtonText: 'Voltar',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#343a40',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document
+                    .getElementById('formCancelarAgendamento')
+                    .submit();
+            }
+        });
+    }
+    </script>
+@endsection
+@endif
 

@@ -48,13 +48,6 @@
             </div>
         @endif
 
-        {{-- CLIENTE LOGADO --}}
-        @if($cliente && $status == 'confirmado')
-            <div class="alert alert-success">
-                Olá, {{ $cliente->nome }} 👋
-            </div>
-        @endif
-
         <div class="d-flex justify-content-between align-items-center mb-4">
             <a
                 href="{{ route('cliente.agenda', [
@@ -116,7 +109,7 @@
     <div class="modal fade" id="agendarModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content modal-dark">
-                <form action="{{ route('cliente.agendar') }}" method="POST">
+                <form id="formAgendamento" action="{{ route('cliente.agendar') }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title">Confirmar Agendamento</h5>
@@ -124,7 +117,6 @@
                     </div>
 
                     <div class="modal-body">
-
                         <input type="hidden" name="slug" value="{{ $barbearia->slug }}">
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                         <input type="hidden" name="servico_id" value="{{ request('servico_id') }}">
@@ -132,56 +124,51 @@
 
                         <input type="hidden" name="inicio" id="horarioSelecionado" value="{{ old('inicio') }}">
                         <input type="hidden" name="fimServico" id="fimSelecionado" value="{{ old('fimServico') }}">
-
+                        
                         <div class="mb-3">
                             <label class="form-label">Horário selecionado</label>
                             <input type="text" id="horarioPreview" class="form-control" readonly value="{{ old('inicio') && old('fimServico') ? old('inicio').' - '.old('fimServico') : '' }}">
                         </div>
 
-                        {{-- CLIENTE --}}
-                        @if(!$cliente || $status == 'cancelado' || $status == 'finalizado')
-
-                            <div class="mb-3">
-                                <label class="form-label">Nome</label>
-                                <input
-                                    type="text"
-                                    name="nome_cliente"
-                                    class="form-control @error('nome_cliente') is-invalid @enderror"
-                                    value="{{ old('nome_cliente') }}"
-                                    required
-                                >
-                                @error('nome_cliente')
-                                    <div class="invalid-feedback d-block">
-                                        {{ $message }}
-                                    </div>
-                                @enderror 
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Telefone</label>
-                                <input
+                        <div class="mb-3">
+                            <label class="form-label">Nome</label>
+                            <input
                                 type="text"
-                                name="telefone_cliente"
-                                class="form-control @error('telefone_cliente') is-invalid @enderror"
-                                value="{{ old('telefone_cliente') }}"
+                                name="nome_cliente"
+                                class="form-control @error('nome_cliente') is-invalid @enderror"
+                                value="{{ old('nome_cliente') }}"
                                 required
                             >
-                                @error('telefone_cliente')
-                                    <div class="invalid-feedback d-block">
-                                        {{ $message }}
-                                    </div>
-                                @enderror                     
-                            </div>
-                        @else
-                            <div class="alert alert-info">
-                                Agendando como:
-                                <strong>{{ $cliente->nome }}</strong>
-                            </div>
-                        @endif
+                            @error('nome_cliente')
+                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                            @enderror 
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input
+                            type="text"
+                            name="telefone_cliente"
+                            class="form-control @error('telefone_cliente') is-invalid @enderror"
+                            value="{{ old('telefone_cliente') }}"
+                            required
+                        >
+                            @error('telefone_cliente')
+                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                            @enderror                     
+                        </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success w-100">
+                        <button
+                            type="button"
+                            class="btn btn-success w-100"
+                            onclick="confirmarAgendamento()"
+                        >
                             Confirmar agendamento
                         </button>
                     </div>
@@ -210,5 +197,40 @@
     @if ($errors->any())
         agendarModal.show();
     @endif
+
+    function confirmarAgendamento()
+    {
+        const horario = document.getElementById('horarioPreview').value;
+
+        Swal.fire({
+            title: 'Confirmar Agendamento',
+            html: `
+                <div>
+                    <p class="mt-3 mb-1 text-secondary">
+                        Barbeiro selecionado
+                    </p>
+                    <h4>{{ $user->name }}</h4>
+                    <p class="mt-3 mb-1 text-secondary">
+                        Horário selecionado
+                    </p>
+                    <h4>${horario}</h4>
+                </div>
+            `,
+            icon: 'question',
+            background: '#1e1e1e',
+            color: '#f5f5f5',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Voltar',
+            confirmButtonColor: '#198754',
+            cancelButtonColor: '#495057',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('formAgendamento').submit();
+            }
+        });
+    }
+
 </script>
 @endsection

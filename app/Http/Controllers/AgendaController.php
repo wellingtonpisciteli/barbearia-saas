@@ -20,15 +20,26 @@ class AgendaController extends Controller
     public function index(string $slug)
     {
         $barbearia = Barbearia::where('slug', $slug)->firstOrFail();
-        $barbeiros = User::where('barbearia_id', $barbearia->id)->get();
 
-        $servicos = Servico::where('barbearia_id', $barbearia->id)->where('ativo', true)->get();
+        $barbeiros = User::where(
+            'barbearia_id',
+            $barbearia->id
+        )->get();
+
+        $servicos = Servico::where('barbearia_id', $barbearia->id)
+            ->where('ativo', true)
+            ->get();
 
         $token = request()->cookie('cliente_token');
+
         $cliente = Cliente::where('token', $token)->first();
 
         if($cliente){
-            $agendamentos = Agendamento::where('cliente_id', $cliente->id)->where('status', 'confirmado')->get();
+
+            $agendamentos = Agendamento::where('cliente_id', $cliente->id)
+                ->where('barbearia_id', $barbearia->id)
+                ->where('status', 'confirmado')
+                ->get();
 
             foreach($agendamentos as $agendamento){
                 $this->verificarAgendamento($agendamento);
@@ -38,16 +49,15 @@ class AgendaController extends Controller
         $agendamentoCliente = null;
 
         if($cliente){
-            $agendamentoCliente =
-                Agendamento::where('cliente_id', $cliente->id)
-                ->where(
-                    'status',
-                    'confirmado'
-                )
+
+            $agendamentoCliente = Agendamento::where('cliente_id', $cliente->id)
+                ->where('barbearia_id', $barbearia->id)
+                ->where('status', 'confirmado')
                 ->first();
         }
 
-        return view('cliente.disponibilidade.index',
+        return view(
+            'cliente.disponibilidade.index',
             compact(
                 'barbeiros',
                 'barbearia',
@@ -60,8 +70,6 @@ class AgendaController extends Controller
 
     public function show(Request $request, string $slug, User $user, $date = null)
     {
-        $status = "";
-
         $servico_id = $request->servico_id;
         $servico = Servico::findOrFail($servico_id);
 
@@ -70,18 +78,29 @@ class AgendaController extends Controller
         $token = request()->cookie('cliente_token');
         $cliente = Cliente::where('token', $token)->first();
 
-        if($cliente){
-            $status = Agendamento::where('cliente_id', $cliente->id)->orderByDesc('id')->value('status');
-        }
-
         $data = $date ? Carbon::parse($date) : Carbon::today();
 
         $barbearia = Barbearia::where('slug', $slug)->firstOrFail();
 
+        $agendamentoConfirmado = null;
+        $status = '';
+
+        if ($cliente) {
+
+            $agendamentoConfirmado = Agendamento::query()
+                ->where('cliente_id', $cliente->id)
+                ->where('barbearia_id', $barbearia->id)
+                ->where('status', 'confirmado')
+                ->latest()
+                ->first();
+
+            $status = $agendamentoConfirmado?->status ?? '';
+        }
+
         // Bloqueia barbeiro caso ele não pertença à barbearia da URL
         abort_if($user->barbearia_id !== $barbearia->id, 404);
 
-        // Busca os horários de trabalho ativos do barbeiro para a data selecionada  
+        // Busca os horários de trabalho ativos do barbeiro para a data selecionada
         $disponibilidades = Disponibilidade::where('barbeiro_id', $user->id)
             ->where('barbearia_id', $barbearia->id)
             ->where('dia_semana', $data->dayOfWeekIso)
@@ -93,45 +112,58 @@ class AgendaController extends Controller
             ->whereDate('inicio', $data)
             ->where('status', 'confirmado')
             ->get()
-            // Transforma string em objeto de data (Carbon)
-            ->map(fn($a)=>[
-                'inicio'=>Carbon::parse($a->inicio),
-                'fim'=>Carbon::parse($a->fim)
+            ->map(fn($a) => [
+                'inicio' => Carbon::parse($a->inicio),
+                'fim' => Carbon::parse($a->fim)
             ]);
 
         $horarios = [];
 
-        foreach($disponibilidades as $disp){
-            $inicio = Carbon::parse($data->format('Y-m-d').' '.$disp->inicio);
-            $fim = Carbon::parse($data->format('Y-m-d').' '.$disp->fim);
+        foreach ($disponibilidades as $disp) {
 
-            while(true){
+            $inicio = Carbon::parse(
+                $data->format('Y-m-d') . ' ' . $disp->inicio
+            );
+
+            $fim = Carbon::parse(
+                $data->format('Y-m-d') . ' ' . $disp->fim
+            );
+
+            while (true) {
+
                 $inicioSlot = $inicio->copy();
                 $fimSlot = $inicio->copy()->addMinutes($duracao);
 
-                if($fimSlot > $fim){
+                if ($fimSlot > $fim) {
                     break;
                 }
-                
-               $ocupado = $agendados->contains(fn($a) => $inicioSlot < $a['fim'] && $fimSlot > $a['inicio']);
+
+                $ocupado = $agendados->contains(
+                    fn($a) =>
+                        $inicioSlot < $a['fim']
+                        && $fimSlot > $a['inicio']
+                );
 
                 // Bloqueia horários passados
-                if($inicioSlot->lte(now())){
+                if ($inicioSlot->lte(now())) {
                     $ocupado = true;
                 }
 
                 $horarios[] = [
-                    'inicio'=>$inicioSlot->format('H:i'),
-                    'fim'=>$fimSlot->format('H:i'),
-                    'ocupado'=>$ocupado
+                    'inicio' => $inicioSlot->format('H:i'),
+                    'fim' => $fimSlot->format('H:i'),
+                    'ocupado' => $ocupado
                 ];
 
                 $inicio->addMinutes($duracao);
             }
         }
 
-        if($status == 'confirmado'){
-            return redirect()->route('cliente.disponibilidade', $slug);
+        if ($agendamentoConfirmado) {
+            return redirect()->route(
+                'cliente.disponibilidade',
+                $slug
+            );
         }
 
         return view(
@@ -146,7 +178,6 @@ class AgendaController extends Controller
                 'servico'
             )
         );
-        
     }
 
     public function store(Request $request)

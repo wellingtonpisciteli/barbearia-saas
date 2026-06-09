@@ -79,13 +79,11 @@ body{
 }
 
 /* SELECT */
-
 .custom-select{
 
-    background: #0f0f0f !important;
+    background-color: #0f0f0f !important;
 
-    border:
-        1px solid rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.08);
 
     color: white;
 
@@ -203,6 +201,7 @@ body{
 
 }
 
+/* CSS DA FOOTER */
 .footer{
 
     margin-top: 70px;
