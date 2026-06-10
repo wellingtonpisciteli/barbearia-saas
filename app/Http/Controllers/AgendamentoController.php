@@ -12,33 +12,36 @@ class AgendamentoController extends Controller
 {
     public function index()
     {
-        $barbeariaId =
-            Auth::user()->barbearia_id;
-
-        $agendamentos =
-            Agendamento::with('barbeiro')
+        $agendamentos = Agendamento::with([
+                'cliente',
+                'servico'
+            ])
             ->where(
-                'barbearia_id',
-                $barbeariaId
+                'barbeiro_id',
+                Auth::id()
+            )
+            ->where(
+                'status',
+                'confirmado'
             )
             ->whereDate(
                 'inicio',
                 Carbon::today()
             )
+            ->orderBy('inicio')
             ->get();
 
         return view(
-            'adm.agendamento.index',
+            'barbeiro.agendamento.index',
             compact('agendamentos')
         );
     }
 
-    public function admCancelar(int $id)
+    public function cancelar(int $id)
     {
-        $agendamento =
-            Agendamento::where(
-                'barbearia_id',
-                Auth::user()->barbearia_id
+        $agendamento = Agendamento::where(
+                'barbeiro_id',
+                Auth::id()
             )
             ->findOrFail($id);
 

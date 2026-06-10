@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Cliente;
 
 class Agendamento extends Model
 {
@@ -42,5 +43,10 @@ class Agendamento extends Model
     public function servico()
     {
         return $this->belongsTo(Servico::class);
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class);
     }
 }

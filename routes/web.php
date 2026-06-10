@@ -4,21 +4,37 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\FCMController;
+use App\Http\Controllers\AuthController;
 
 // =========================
-// ADM
+// BARBEIRO
 // =========================
-Route::prefix('adm')->group(function () {
+Route::prefix('barbeiro')->group(function () {
 
-    Route::get(
-        '/agendamento',
-        [AgendamentoController::class, 'index']
-    );
+    // Login
+    Route::get('/login', [AuthController::class, 'login'])
+        ->name('barbeiro.login');
 
-    Route::delete(
-        '/agendamento/{id}',
-        [AgendamentoController::class, 'admCancelar']
-    )->name('agendamento.admCancelar');
+    Route::post('/login', [AuthController::class, 'autenticar'])
+        ->name('barbeiro.autenticar');
+
+    // Rotas protegidas
+    Route::middleware('auth')->group(function () {
+
+        Route::post('/logout', [AuthController::class, 'logout'])
+            ->name('barbeiro.logout');
+
+        Route::get(
+            '/agendamentos',
+            [AgendamentoController::class, 'index']
+        )->name('barbeiro.agendamento.index');
+
+        Route::delete(
+            '/agendamentos/{id}',
+            [AgendamentoController::class, 'cancelar']
+        )->name('barbeiro.agendamento.cancelar');
+
+    });
 
 });
 

@@ -185,16 +185,16 @@ class AgendaController extends Controller
         $request->validate(
             [
                 'nome_cliente' => [
-                    'required',             // Não pode ficar vazio
+                    'required',             
                     'min:4',
                     'max:30',
-                    'regex:/^[A-Za-zÀ-ÿ\s]+$/' // Só letras e espaços
+                    'regex:/^[A-Za-zÀ-ÿ\s]+$/' 
                 ],
                 'telefone_cliente' => [
-                    'required',             // Não pode ficar vazio
+                    'required',             
                     'min:9',
                     'max:13',
-                    'regex:/^[0-9]+$/'     // Só números
+                    'regex:/^[0-9]+$/'     
                 ],
                 'servico_id' => 'required|exists:servicos,id',
             ],
