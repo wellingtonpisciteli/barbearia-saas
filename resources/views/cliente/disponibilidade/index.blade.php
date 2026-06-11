@@ -2,6 +2,13 @@
 
 @section('title', 'Agendamento')
 
+@section('styles')
+<link
+    rel="stylesheet"
+    href="{{ asset('css/cliente.css') }}"
+>
+@endsection
+
 @section('content')
 
 <div class="container py-4">

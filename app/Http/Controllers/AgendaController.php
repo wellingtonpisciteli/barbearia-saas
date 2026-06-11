@@ -30,9 +30,13 @@ class AgendaController extends Controller
             ->where('ativo', true)
             ->get();
 
-        $token = request()->cookie('cliente_token');
+        $cookieName = 'cliente_token_' . $barbearia->slug;
 
-        $cliente = Cliente::where('token', $token)->first();
+        $token = request()->cookie($cookieName);
+
+        $cliente = Cliente::where('token', $token)
+            ->where('barbearia_id', $barbearia->id)
+            ->first();
 
         if($cliente){
 
@@ -75,12 +79,17 @@ class AgendaController extends Controller
 
         $duracao = $servico->duracao;
 
-        $token = request()->cookie('cliente_token');
-        $cliente = Cliente::where('token', $token)->first();
-
         $data = $date ? Carbon::parse($date) : Carbon::today();
 
         $barbearia = Barbearia::where('slug', $slug)->firstOrFail();
+
+        $cookieName = 'cliente_token_' . $barbearia->slug;
+
+        $token = $request->cookie($cookieName);
+
+        $cliente = Cliente::where('token', $token)
+            ->where('barbearia_id', $barbearia->id)
+            ->first();
 
         $agendamentoConfirmado = null;
         $status = '';
@@ -216,18 +225,28 @@ class AgendaController extends Controller
 
         $barbearia = Barbearia::where('slug', $request->slug)->firstOrFail();
 
-        $token = $request->cookie('cliente_token');
-        $cliente = Cliente::where('token', $token)->first();
+        $cookieName = 'cliente_token_' . $barbearia->slug;
 
-        if(!$cliente){
+        $token = $request->cookie($cookieName);
+
+        $cliente = Cliente::where('token', $token)
+            ->where('barbearia_id', $barbearia->id)
+            ->first();
+
+        if (!$cliente) {
+
             $cliente = Cliente::create([
                 'barbearia_id' => $barbearia->id,
                 'nome' => $request->nome_cliente,
                 'telefone' => $request->telefone_cliente,
-                'token' => Str::uuid(),
-                ]);
+                'token' => (string) Str::uuid(),
+            ]);
 
-            Cookie::queue('cliente_token', $cliente->token, 60 * 24 * 30);
+            Cookie::queue(
+                $cookieName,
+                $cliente->token,
+                60 * 24 * 30
+            );
         }
 
         $inicio = Carbon::parse($request->data . ' ' . $request->inicio);
@@ -265,19 +284,30 @@ class AgendaController extends Controller
 
     public function cancelar(Request $request, int $id)
     {
-        $agendamento = Agendamento::findOrFail($id);
+        $agendamento = Agendamento::with('barbearia')
+            ->findOrFail($id);
 
-        $token = $request->cookie('cliente_token');
+        $cookieName = 'cliente_token_' .
+            $agendamento->barbearia->slug;
 
-        $cliente = Cliente::where('token', $token)->first();
+        $token = $request->cookie($cookieName);
 
-        if(!$cliente || $agendamento->cliente_id != $cliente->id){
+        $cliente = Cliente::where('token', $token)
+            ->where('barbearia_id', $agendamento->barbearia_id)
+            ->first();
+
+        if (!$cliente || $agendamento->cliente_id != $cliente->id) {
             abort(403);
         }
 
-        $agendamento->update(['status' => 'cancelado']);
+        $agendamento->update([
+            'status' => 'cancelado'
+        ]);
 
-        return back()->with('success', 'Agendamento cancelado');
+        return back()->with(
+            'success',
+            'Agendamento cancelado'
+        );
     }
 
     public function verificarAgendamento(Agendamento $agendamento)

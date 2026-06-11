@@ -16,10 +16,7 @@
         rel="stylesheet"
     >
 
-    <link
-        rel="stylesheet"
-        href="{{ asset('css/cliente.css') }}"
-    >
+    @yield('styles')
     
 </head>
 

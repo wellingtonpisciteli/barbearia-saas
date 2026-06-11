@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('styles')
+<link
+    rel="stylesheet"
+    href="{{ asset('css/cliente.css') }}"
+>
+@endsection
+
 @section('content')
 
 <div class="agenda-page">

@@ -1,45 +1,103 @@
-@foreach($agendamentos as $agendamento)
+@extends('layouts.app')
 
-<p>
-    Cliente:
-    {{ $agendamento->cliente->nome }}
-</p>
+@section('title', 'Home')
 
-<p>
-    Serviço:
-    {{ $agendamento->servico->nome }}
-</p>
-
-<p>
-    Telefone:
-    {{ $agendamento->cliente->telefone }}
-</p>
-
-<p>
-    Horário:
-    {{ $agendamento->inicio->format('d/m H:i') }}
-</p>
-
-<form
-    action="{{ route('barbeiro.agendamento.cancelar', $agendamento->id) }}"
-    method="POST"
+@section('styles')
+<link
+    rel="stylesheet"
+    href="{{ asset('css/barbeiro.css') }}"
 >
-    @csrf
-    @method('DELETE')
+@endsection
 
-    <button type="submit">
-        Finalizar
-    </button>
-</form>
+@section('content')
 
-<hr>
+<div class="dashboard-layout">
 
-@endforeach
+    @include('barbeiro.partials.menu')
 
-<form action="{{ route('barbeiro.logout') }}" method="POST">
-    @csrf
+    <div class="dashboard-content">
 
-    <button type="submit">
-        Sair
-    </button>
-</form>
+        <div class="container py-4">
+
+            <div class="agenda-header mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">
+                        Olá, {{ Auth::user()->name }}
+                    </h2>
+
+                    <p class="text-secondary mb-0">
+                        Agenda de Hoje
+                    </p>
+                </div>
+
+            </div>
+
+            <hr>
+
+            @forelse($agendamentos as $agendamento)
+
+                <div class="agenda-card">
+
+                    <div class="agenda-hour">
+                        {{ $agendamento->inicio->format('H:i') }}
+                    </div>
+
+                    <div class="agenda-info">
+
+                        <div class="agenda-cliente">
+                            {{ $agendamento->cliente->nome }}
+                        </div>
+
+                        <div class="agenda-servico">
+                            {{ $agendamento->servico->nome }}
+                        </div>
+
+                        <div class="agenda-telefone">
+
+                            <i class="bi bi-telephone"></i>
+
+                            {{ $agendamento->cliente->telefone }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="agenda-actions">
+
+                        <form
+                            action="{{ route('barbeiro.agendamento.cancelar', $agendamento->id) }}"
+                            method="POST"
+                        >
+                            @csrf
+                            @method('DELETE')
+
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+                                Finalizar
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            @empty
+
+                <div class="alert alert-dark">
+                    Nenhum agendamento hoje.
+                </div>
+
+            @endforelse
+
+        </div>
+        
+        @include('barbeiro.partials.footer')
+
+    </div>
+
+</div>
+
+@endsection
