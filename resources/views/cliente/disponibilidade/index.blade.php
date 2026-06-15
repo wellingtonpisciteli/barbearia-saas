@@ -19,7 +19,7 @@
         <div class="text-center">
 
             <img
-                src="{{ asset('img/logo.png') }}"
+                src="{{ asset('img/barbearia/logo.png') }}"
                 alt="Logo"
                 class="logo mb-5"
             >
