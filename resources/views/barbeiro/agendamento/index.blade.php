@@ -65,6 +65,7 @@
                     <div class="agenda-actions">
 
                         <form
+                            id="formFinalizar-{{ $agendamento->id }}"
                             action="{{ route('barbeiro.agendamento.cancelar', $agendamento->id) }}"
                             method="POST"
                         >
@@ -72,8 +73,13 @@
                             @method('DELETE')
 
                             <button
-                                type="submit"
-                                class="btn btn-success"
+                                type="button"
+                                class="btn btn-outline-danger"
+                                onclick="confirmarFinalizar(
+                                    {{ $agendamento->id }},
+                                    '{{ addslashes($agendamento->cliente->nome) }}',
+                                    '{{ $agendamento->cliente->telefone }}'
+                                )"
                             >
                                 Finalizar
                             </button>
@@ -100,4 +106,42 @@
 
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+function confirmarFinalizar(id, nome, telefone)
+{
+    Swal.fire({
+        title: 'Finalizar Agendamento',
+        html: `
+            <div>
+                <p class="mt-3 mb-1 text-secondary">
+                    Cliente
+                </p>
+                <h4>${nome}</h4>
+                <p class="mt-3 mb-1 text-secondary">
+                    Telefone
+                </p>
+                <h4>${telefone}</h4>
+            </div>
+        `,
+        icon: 'question',
+        background: '#1e1e1e',
+        color: '#f5f5f5',
+        showCancelButton: true,
+        confirmButtonText: 'Finalizar',
+        cancelButtonText: 'Voltar',
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#495057',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document
+                .getElementById(`formFinalizar-${id}`)
+                .submit();
+        }
+    });
+}
+</script>
 @endsection

@@ -21,7 +21,7 @@
         class="logo"
     >
 
-    <h2>Bem-Vindo</h2>
+    <h2>Bem-Vindo ao FadeOS</h2>
 
     <input
         type="email"

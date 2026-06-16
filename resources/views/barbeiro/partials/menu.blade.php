@@ -36,11 +36,11 @@
 
     <div class="offcanvas-body d-flex flex-column">
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('barbeiro.agendamento.index') }}" class="sidebar-link">
             Agenda
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('barbeiro.clientes') }}" class="sidebar-link">
             Clientes
         </a>
 
@@ -87,11 +87,11 @@
         </h3>
         <hr>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('barbeiro.agendamento.index') }}" class="sidebar-link">
             Agenda
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('barbeiro.clientes') }}" class="sidebar-link">
             Clientes
         </a>
 

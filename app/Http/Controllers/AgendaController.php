@@ -203,7 +203,8 @@ class AgendaController extends Controller
                     'required',             
                     'min:9',
                     'max:13',
-                    'regex:/^[0-9]+$/'     
+                    'regex:/^[0-9]+$/',
+                    'unique:clientes,telefone'    
                 ],
                 'servico_id' => 'required|exists:servicos,id',
             ],
@@ -217,6 +218,7 @@ class AgendaController extends Controller
                 'telefone_cliente.min' => 'O telefone deve ter no mínimo 9 caracteres.',
                 'telefone_cliente.max' => 'O telefone deve ter no máximo 13 caracteres.',
                 'telefone_cliente.regex' => 'O telefone deve conter apenas números.',
+                'telefone_cliente.unique' => 'Este telefone já está em uso.',
 
                 'servico_id.required' => 'Selecione um serviço.',
                 'servico_id.exists' => 'Serviço inválido.',

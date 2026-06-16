@@ -29,6 +29,16 @@ Route::prefix('barbeiro')->group(function () {
             [AgendamentoController::class, 'index']
         )->name('barbeiro.agendamento.index');
 
+        Route::get(
+            '/clientes',
+            [AgendamentoController::class, 'clientes']
+        )->name('barbeiro.clientes');
+
+        Route::delete(
+            '/clientes/{cliente}',
+            [AgendamentoController::class, 'destroy']
+        )->name('barbeiro.clientes.destroy');
+
         Route::delete(
             '/agendamentos/{id}',
             [AgendamentoController::class, 'cancelar']
