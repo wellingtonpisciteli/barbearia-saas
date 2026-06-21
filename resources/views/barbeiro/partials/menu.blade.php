@@ -44,7 +44,7 @@
             Clientes
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('barbeiro.barbeiros') }}" class="sidebar-link">
             Barbeiros
         </a>
 
@@ -95,7 +95,7 @@
             Clientes
         </a>
 
-        <a href="#" class="sidebar-link">
+        <a href="{{ route('barbeiro.barbeiros') }}" class="sidebar-link">
             Barbeiros
         </a>
 

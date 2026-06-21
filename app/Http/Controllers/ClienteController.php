@@ -14,8 +14,9 @@ use App\Models\Cliente;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class AgendaController extends Controller
+class ClienteController extends Controller
 {
     public function index(string $slug)
     {
@@ -138,6 +139,18 @@ class AgendaController extends Controller
                 $data->format('Y-m-d') . ' ' . $disp->fim
             );
 
+            $intervaloInicio = $disp->intervalo_inicio
+                ? Carbon::parse(
+                    $data->format('Y-m-d') . ' ' . $disp->intervalo_inicio
+                )
+                : null;
+
+            $intervaloFim = $disp->intervalo_fim
+                ? Carbon::parse(
+                    $data->format('Y-m-d') . ' ' . $disp->intervalo_fim
+                )
+                : null;
+
             while (true) {
 
                 $inicioSlot = $inicio->copy();
@@ -152,6 +165,16 @@ class AgendaController extends Controller
                         $inicioSlot < $a['fim']
                         && $fimSlot > $a['inicio']
                 );
+
+                // Verifica se o horário cai no intervalo do barbeiro
+                if (
+                    $intervaloInicio &&
+                    $intervaloFim &&
+                    $inicioSlot < $intervaloFim &&
+                    $fimSlot > $intervaloInicio
+                ) {
+                    $ocupado = true;
+                }
 
                 // Bloqueia horários passados
                 if ($inicioSlot->lte(now())) {
@@ -191,6 +214,8 @@ class AgendaController extends Controller
 
     public function store(Request $request)
     {
+        $barbearia = Barbearia::where('slug', $request->slug)->firstOrFail();
+
         $request->validate(
             [
                 'nome_cliente' => [
@@ -204,7 +229,10 @@ class AgendaController extends Controller
                     'min:9',
                     'max:13',
                     'regex:/^[0-9]+$/',
-                    'unique:clientes,telefone'    
+                    Rule::unique('clientes', 'telefone')
+                        ->where(function ($query) use ($barbearia) {
+                            return $query->where('barbearia_id', $barbearia->id);
+                        }),
                 ],
                 'servico_id' => 'required|exists:servicos,id',
             ],
@@ -224,8 +252,6 @@ class AgendaController extends Controller
                 'servico_id.exists' => 'Serviço inválido.',
             ]
         );
-
-        $barbearia = Barbearia::where('slug', $request->slug)->firstOrFail();
 
         $cookieName = 'cliente_token_' . $barbearia->slug;
 

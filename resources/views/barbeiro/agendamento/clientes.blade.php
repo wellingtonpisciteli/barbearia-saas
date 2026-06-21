@@ -52,29 +52,33 @@
                             {{ $cliente->telefone }}
                         </div>
 
-                    </div>
+                    </div>  
 
-                    <form
-                        id="formExcluir-{{ $cliente->id }}"
-                        action="{{ route('barbeiro.clientes.destroy', $cliente->id) }}"
-                        method="POST"
-                    >
-                        @csrf
-                        @method('DELETE')
+                    @auth
+                        @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
 
-                        <button
-                            type="button"
-                            class="btn btn-outline-danger"
-                            onclick="confirmarExcluir(
-                                {{ $cliente->id }},
-                                '{{ addslashes($cliente->nome) }}',
-                                '{{ $cliente->telefone }}'
-                            )"
-                        >
-                            Excluir
-                        </button>
-                    </form>
+                            <form
+                                id="formExcluir-{{ $cliente->id }}"
+                                action="{{ route('barbeiro.clientes.destroyCliente', $cliente->id) }}"
+                                method="POST"
+                            >
+                                @csrf
+                                @method('DELETE')
 
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger w-100 w-md-auto no-border-btn"
+                                    onclick="confirmarExcluir(
+                                        {{ $cliente->id }},
+                                        '{{ addslashes($cliente->nome) }}',
+                                        '{{ $cliente->telefone }}'
+                                    )"
+                                >
+                                    <i class="bi bi-trash me-1"></i>
+                                </button>
+                            </form>
+                        @endif
+                    @endauth
                 </div>
 
             @empty

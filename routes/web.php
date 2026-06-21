@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AgendamentoController;
-use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\BarbeiroController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FCMController;
 use App\Http\Controllers\AuthController;
 
@@ -24,24 +24,45 @@ Route::prefix('barbeiro')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])
             ->name('barbeiro.logout');
 
+        Route::post(
+            '/criarBarbeiro',
+            [BarbeiroController::class, 'store']
+        )->name('barbeiro.criarBarbeiro');
+
+
+        Route::get(
+            '/novoBarbeiro',
+            [BarbeiroController::class, 'create']
+        )->name('barbeiro.novoBarbeiro');
+
         Route::get(
             '/agendamentos',
-            [AgendamentoController::class, 'index']
+            [BarbeiroController::class, 'index']
         )->name('barbeiro.agendamento.index');
 
         Route::get(
             '/clientes',
-            [AgendamentoController::class, 'clientes']
+            [BarbeiroController::class, 'clientes']
         )->name('barbeiro.clientes');
+
+        Route::get(
+            '/barbeiros',
+            [BarbeiroController::class, 'barbeiros']
+        )->name('barbeiro.barbeiros');
 
         Route::delete(
             '/clientes/{cliente}',
-            [AgendamentoController::class, 'destroy']
-        )->name('barbeiro.clientes.destroy');
+            [BarbeiroController::class, 'destroyCliente']
+        )->name('barbeiro.clientes.destroyCliente');
+
+        Route::delete(
+            '/barbeiros/{barbeiro}',
+            [BarbeiroController::class, 'destroyBarbeiro']
+        )->name('barbeiro.barbeiros.destroyBarbeiro');
 
         Route::delete(
             '/agendamentos/{id}',
-            [AgendamentoController::class, 'cancelar']
+            [BarbeiroController::class, 'cancelar']
         )->name('barbeiro.agendamento.cancelar');
 
     });
@@ -56,22 +77,22 @@ Route::prefix('cliente')->group(function () {
 
     Route::get(
         '/disponibilidade/{slug}',
-        [AgendaController::class, 'index']
+        [ClienteController::class, 'index']
     )->name('cliente.disponibilidade');
 
     Route::get(
         '/disponibilidade/{slug}/{user}/{date?}',
-        [AgendaController::class, 'show']
+        [ClienteController::class, 'show']
     )->name('cliente.agenda');
 
     Route::post(
         '/agendar',
-        [AgendaController::class, 'store']
+        [ClienteController::class, 'store']
     )->name('cliente.agendar');
 
     Route::post(
         '/{id}/cancelar',
-        [AgendaController::class, 'cancelar']
+        [ClienteController::class, 'cancelar']
     )->name('cliente.cancelar');
 });
 
