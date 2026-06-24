@@ -24,6 +24,11 @@ Route::prefix('barbeiro')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])
             ->name('barbeiro.logout');
 
+        Route::get(
+            '/novoBarbeiro',
+            [BarbeiroController::class, 'create']
+        )->name('barbeiro.novoBarbeiro');
+
         Route::post(
             '/criarBarbeiro',
             [BarbeiroController::class, 'store']
@@ -31,9 +36,15 @@ Route::prefix('barbeiro')->group(function () {
 
 
         Route::get(
-            '/novoBarbeiro',
-            [BarbeiroController::class, 'create']
-        )->name('barbeiro.novoBarbeiro');
+            '/createEditar/{id}',
+            [BarbeiroController::class, 'createEditar']
+        )->name('barbeiro.createEditar');
+
+        Route::post(
+            '/update/{id}',
+            [BarbeiroController::class, 'update']
+        )->name('barbeiro.update');
+
 
         Route::get(
             '/agendamentos',

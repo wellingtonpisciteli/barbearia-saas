@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\Disponibilidade;
+use Illuminate\Support\Facades\Hash;
 
 class BarbeiroController extends Controller
 {
@@ -244,6 +245,123 @@ class BarbeiroController extends Controller
         return redirect()->route('barbeiro.barbeiros');
     }
 
+    public function createEditar(int $id)
+    {
+        $barbeiro = User::findOrFail($id);
+
+        $disponibilidade = Disponibilidade::where('barbeiro_id', $id)->first();
+
+        $diasSelecionados = Disponibilidade::where(
+            'barbeiro_id',
+            $id
+        )->pluck('dia_semana')
+        ->toArray();
+
+        return view(
+            'barbeiro.agendamento.editarBarbeiro',
+            compact(
+                'barbeiro',
+                'disponibilidade',
+                'diasSelecionados'
+            )
+        );
+    }
+
+
+    public function update(Request $request, int $id)
+    {
+        $barbeiro = User::findOrFail($id);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'telefone' => 'nullable|string|max:20',
+            'role' => 'nullable|in:colaborador,admin',
+
+            'inicio' => 'nullable',
+            'intervalo_inicio' => 'nullable',
+            'intervalo_fim' => 'nullable',
+            'fim' => 'nullable',
+
+            'password' => 'nullable|string|min:6|confirmed',
+
+            'dias_semana' => 'required|array|min:1',
+            'dias_semana.*' => 'integer|between:1,7',
+        ]);
+
+        $inicio = $request->inicio ? strtotime($request->inicio) : null;
+        $fim = $request->fim ? strtotime($request->fim) : null;
+        $intInicio = $request->intervalo_inicio ? strtotime($request->intervalo_inicio) : null;
+        $intFim = $request->intervalo_fim ? strtotime($request->intervalo_fim) : null;
+
+        if ($inicio && $fim && $intInicio && $intFim) {
+
+            if (
+                $intInicio >= $intFim ||
+                $intInicio <= $inicio ||
+                $intFim >= $fim
+            ) {
+                return back()
+                    ->withErrors([
+                        'intervalo_inicio' => 'O intervalo deve estar dentro do expediente.',
+                    ])
+                    ->withInput();
+            }
+        }
+
+        /*
+        |-----------------------------------------
+        | NORMALIZA HORÁRIOS
+        |-----------------------------------------
+        */
+        foreach (['inicio', 'intervalo_inicio', 'intervalo_fim', 'fim'] as $campo) {
+            $data[$campo] = !empty($data[$campo])
+                ? date('H:i', strtotime($data[$campo]))
+                : null;
+        }
+
+        /*
+        |-----------------------------------------
+        | USER DATA
+        |-----------------------------------------
+        */
+        $userData = collect($data)->only([
+            'name',
+            'email',
+            'telefone',
+            'role',
+        ])->toArray();
+
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        // atualiza usuário
+        $barbeiro->update($userData);
+
+        $novos = (array) $data['dias_semana'];
+
+        $barbeiro->disponibilidades()
+            ->whereNotIn('dia_semana', $novos)
+            ->delete();
+
+        foreach ($novos as $dia) {
+            $barbeiro->disponibilidades()->updateOrCreate(
+                [
+                    'barbeiro_id' => $barbeiro->id,
+                    'dia_semana' => $dia,
+                ],
+                [
+                    'inicio' => $data['inicio'],
+                    'intervalo_inicio' => $data['intervalo_inicio'],
+                    'intervalo_fim' => $data['intervalo_fim'],
+                    'fim' => $data['fim'],
+                ]
+            );
+        }
+
+        return redirect()->route('barbeiro.barbeiros');
+    }
 
     public function cancelar(int $id)
     {

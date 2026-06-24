@@ -81,3 +81,20 @@ body {
     margin-top: -80px;
     margin-bottom: -80px;
 }
+
+/* ANIMAÇÕES */
+.btn,
+button,
+a {
+    transition: transform 0.08s ease, background-color 0.08s ease;
+}
+
+.card {
+    transition: transform 0.10s ease, opacity 0.10s ease;
+}
+
+.btn:active,
+button:active,
+a:active {
+    transform: scale(0.97);
+}

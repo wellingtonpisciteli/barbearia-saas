@@ -74,7 +74,7 @@
 
                                 {{-- EDITAR --}}
                                 <a
-                                    {{-- href="{{ route('barbeiro.editarBarbeiro', $barbeiro->id) }}" --}}
+                                    href="{{ route('barbeiro.createEditar', $barbeiro->id) }}"
                                     class="btn btn-outline-primary w-100 w-md-auto no-border-btn"
                                 >
                                     <i class="bi bi-pencil me-1"></i>

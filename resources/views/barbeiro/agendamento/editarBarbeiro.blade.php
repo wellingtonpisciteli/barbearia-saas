@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Novo Barbeiro')
+@section('title', 'Editar Barbeiro')
 
 @section('styles')
 <link
@@ -22,7 +22,7 @@
             <div class="agenda-header mb-4">
                 <div>
                     <h2 class="fw-bold mb-1">
-                        Criar Barbeiro
+                        Editar Barbeiro
                     </h2>
                 </div>
 
@@ -36,7 +36,7 @@
 
             <div class="form-card">
 
-                <form action="{{ route('barbeiro.criarBarbeiro') }}" method="POST">
+                <form action="{{ route('barbeiro.update', $barbeiro->id) }}" method="POST">
                     @csrf
 
                     <div class="row g-4">
@@ -50,7 +50,7 @@
                                 type="text"
                                 name="name"
                                 class="form-control @error('name') is-invalid @enderror"
-                                value="{{ old('name') }}"
+                                value="{{ old('name', $barbeiro->name) }}"
                                 placeholder="Digite o nome do barbeiro"
                             >
 
@@ -70,7 +70,7 @@
                                 type="email"
                                 name="email"
                                 class="form-control @error('email') is-invalid @enderror"
-                                value="{{ old('email') }}"
+                                value="{{ old('email', $barbeiro->email) }}"
                                 placeholder="Digite o e-mail"
                             >
 
@@ -90,7 +90,7 @@
                                 type="text"
                                 name="telefone"
                                 class="form-control @error('telefone') is-invalid @enderror"
-                                value="{{ old('telefone') }}"
+                                value="{{ old('telefone', $barbeiro->telefone) }}"
                                 placeholder="(00) 00000-0000"
                             >
 
@@ -114,19 +114,19 @@
 
                                 <option
                                     value="colaborador"
-                                    @selected(old('role') === 'colaborador')
+                                    @selected(old('role', $barbeiro->role) === 'colaborador')
                                 >
                                     Colaborador
                                 </option>
 
                                 <option
                                     value="admin"
-                                    @selected(old('role') === 'admin')
+                                    @selected(old('role', $barbeiro->role) === 'admin')
                                 >
                                     Administrador
                                 </option>
                             </select>
-
+                            
                             @error('role')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -141,10 +141,9 @@
 
                             <input
                                 type="time"
-                                step="60"
                                 name="inicio"
                                 class="form-control @error('inicio') is-invalid @enderror"
-                                value="{{ old('inicio') }}"
+                                value="{{ old('inicio', $disponibilidade?->inicio) }}"
                             >
 
                             @error('inicio')
@@ -163,7 +162,7 @@
                                 type="time"
                                 name="intervalo_inicio"
                                 class="form-control @error('intervalo_inicio') is-invalid @enderror"
-                                value="{{ old('intervalo_inicio') }}"
+                                value="{{ old('intervalo_inicio', $disponibilidade?->intervalo_inicio) }}"
                             >
 
                             @error('intervalo_inicio')
@@ -182,7 +181,7 @@
                                 type="time"
                                 name="intervalo_fim"
                                 class="form-control @error('intervalo_fim') is-invalid @enderror"
-                                value="{{ old('intervalo_fim') }}"
+                                value="{{ old('intervalo_fim', $disponibilidade?->intervalo_fim) }}"
                             >
 
                             @error('intervalo_fim')
@@ -201,7 +200,7 @@
                                 type="time"
                                 name="fim"
                                 class="form-control @error('fim') is-invalid @enderror"
-                                value="{{ old('fim') }}"
+                                value="{{ old('fim', $disponibilidade->fim) }}"
                             >
 
                             @error('fim')
@@ -219,6 +218,7 @@
                             <input
                                 type="password"
                                 name="password"
+                                autocomplete="new-password"
                                 class="form-control @error('password') is-invalid @enderror"
                                 placeholder="Digite uma senha"
                             >
@@ -238,6 +238,7 @@
                             <input
                                 type="password"
                                 name="password_confirmation"
+                                autocomplete="new-password"
                                 class="form-control @error('password') is-invalid @enderror"
                                 placeholder="Confirme a senha"
                             >
@@ -282,7 +283,7 @@
                                             @checked(
                                                 in_array(
                                                     $valor,
-                                                    old('dias_semana', [])
+                                                    old('dias_semana', $diasSelecionados)
                                                 )
                                             )
                                         >
@@ -313,7 +314,7 @@
                             class="btn btn-gold"
                         >
                             <i class="bi bi-check-circle me-2"></i>
-                            Salvar Barbeiro
+                            Editar Barbeiro
                         </button>
                     </div>
 

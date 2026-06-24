@@ -43,4 +43,14 @@ class User extends Authenticatable
             Barbearia::class
         );
     }
+
+    public function disponibilidade()
+    {
+        return $this->hasOne(Disponibilidade::class, 'barbeiro_id');
+    }
+
+    public function disponibilidades()
+    {
+        return $this->hasMany(Disponibilidade::class, 'barbeiro_id');
+    }
 }

@@ -24,4 +24,9 @@ class Disponibilidade extends Model
     {
         return $this->belongsTo(Barbearia::class);
     }
+
+    public function barbeiro()
+    {
+        return $this->belongsTo(User::class, 'barbeiro_id');
+    }
 }
