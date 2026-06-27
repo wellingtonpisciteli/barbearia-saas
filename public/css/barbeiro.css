@@ -1,6 +1,39 @@
 body{
     background:#0f1115;
     color:#fff;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Títulos */
+h1, h2, h3, h4, h5, h6,
+.logo,
+.navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+}
+
+/* Botões */
+.btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+/* Tabelas */
+table {
+    font-family: 'Inter', sans-serif;
 }
 
 .agenda-header{
@@ -195,7 +228,7 @@ hr {
 /* FOOTER */
 .barbeiro-footer {
     border-top: 1px solid #2d323a;
-    background: #15181d;
+    background: #111111;
     padding: 20px 30px;
     color: #8e939c;
 }
@@ -208,7 +241,7 @@ hr {
 }
 
 .footer-content strong {
-    color: #d4a24c;
+    color: #8e939c;
     font-size: 1.1rem;
 }
 
@@ -220,6 +253,12 @@ hr {
     .footer-content {
         flex-direction: column;
         text-align: center;
+    }
+
+    .footer-copy {
+        border-top: 1px solid rgba(255,255,255,.05);
+        margin-top: 20px;
+        padding:18px 0;
     }
 }
 

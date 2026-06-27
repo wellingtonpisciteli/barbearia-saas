@@ -5,6 +5,9 @@ use App\Http\Controllers\BarbeiroController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FCMController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
 
 // =========================
 // BARBEIRO
@@ -80,19 +83,18 @@ Route::prefix('barbeiro')->group(function () {
 
 });
 
-
 // =========================
 // CLIENTE
 // =========================
 Route::prefix('cliente')->group(function () {
 
     Route::get(
-        '/disponibilidade/{slug}',
+        '/{slug}',
         [ClienteController::class, 'index']
     )->name('cliente.disponibilidade');
 
     Route::get(
-        '/disponibilidade/{slug}/{user}/{date?}',
+        '/{slug}/{user}/{date?}',
         [ClienteController::class, 'show']
     )->name('cliente.agenda');
 

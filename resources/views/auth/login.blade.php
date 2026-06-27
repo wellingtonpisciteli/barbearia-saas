@@ -30,15 +30,27 @@
         required
     >
 
-    <input
-        type="password"
-        name="password"
-        placeholder="Senha"
-        required
-    >
+    <div class="password-field">
+        <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Senha"
+            required
+        >
+
+        <button
+            type="button"
+            id="togglePassword"
+            class="toggle-password"
+            aria-label="Mostrar senha"
+        >
+            <i class="bi bi-eye" style="color: rgb(80, 80, 80)"></i>
+        </button>
+    </div>
 
     <div class="forgot-password">
-        <a href="#">
+        <a href="#">           
             Esqueci minha senha
         </a>
     </div>
@@ -48,4 +60,22 @@
     </button>
 </form>
 
+@endsection
+
+@section('scripts')
+<script>
+    const password = document.getElementById('password');
+    const toggle = document.getElementById('togglePassword');
+    const icon = toggle.querySelector('i');
+
+    toggle.addEventListener('click', () => {
+        if (password.type === 'password') {
+            password.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            password.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    });
+</script>
 @endsection

@@ -62,7 +62,7 @@ class ClienteController extends Controller
         }
 
         return view(
-            'cliente.disponibilidade.index',
+            'cliente.index',
             compact(
                 'barbeiros',
                 'barbearia',
@@ -199,7 +199,7 @@ class ClienteController extends Controller
         }
 
         return view(
-            'cliente.disponibilidade.agenda',
+            'cliente.agenda',
             compact(
                 'user',
                 'barbearia',

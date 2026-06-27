@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Editar Barbeiro')
+@section('title', 'Novo Barbeiro')
 
 @section('styles')
 <link
@@ -22,7 +22,7 @@
             <div class="agenda-header mb-4">
                 <div>
                     <h2 class="fw-bold mb-1">
-                        Editar Barbeiro
+                        Criar Barbeiro
                     </h2>
                 </div>
 
@@ -36,7 +36,10 @@
 
             <div class="form-card">
 
-                <form action="{{ route('barbeiro.update', $barbeiro->id) }}" method="POST">
+                <form id="formCriar" 
+                    action="{{ route('barbeiro.criarBarbeiro') }}" 
+                    method="POST">
+
                     @csrf
 
                     <div class="row g-4">
@@ -50,7 +53,7 @@
                                 type="text"
                                 name="name"
                                 class="form-control @error('name') is-invalid @enderror"
-                                value="{{ old('name', $barbeiro->name) }}"
+                                value="{{ old('name') }}"
                                 placeholder="Digite o nome do barbeiro"
                             >
 
@@ -70,7 +73,7 @@
                                 type="email"
                                 name="email"
                                 class="form-control @error('email') is-invalid @enderror"
-                                value="{{ old('email', $barbeiro->email) }}"
+                                value="{{ old('email') }}"
                                 placeholder="Digite o e-mail"
                             >
 
@@ -90,7 +93,7 @@
                                 type="text"
                                 name="telefone"
                                 class="form-control @error('telefone') is-invalid @enderror"
-                                value="{{ old('telefone', $barbeiro->telefone) }}"
+                                value="{{ old('telefone') }}"
                                 placeholder="(00) 00000-0000"
                             >
 
@@ -114,19 +117,19 @@
 
                                 <option
                                     value="colaborador"
-                                    @selected(old('role', $barbeiro->role) === 'colaborador')
+                                    @selected(old('role') === 'colaborador')
                                 >
                                     Colaborador
                                 </option>
 
                                 <option
                                     value="admin"
-                                    @selected(old('role', $barbeiro->role) === 'admin')
+                                    @selected(old('role') === 'admin')
                                 >
                                     Administrador
                                 </option>
                             </select>
-                            
+
                             @error('role')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -141,9 +144,10 @@
 
                             <input
                                 type="time"
+                                step="60"
                                 name="inicio"
                                 class="form-control @error('inicio') is-invalid @enderror"
-                                value="{{ old('inicio', $disponibilidade?->inicio) }}"
+                                value="{{ old('inicio') }}"
                             >
 
                             @error('inicio')
@@ -162,7 +166,7 @@
                                 type="time"
                                 name="intervalo_inicio"
                                 class="form-control @error('intervalo_inicio') is-invalid @enderror"
-                                value="{{ old('intervalo_inicio', $disponibilidade?->intervalo_inicio) }}"
+                                value="{{ old('intervalo_inicio') }}"
                             >
 
                             @error('intervalo_inicio')
@@ -181,7 +185,7 @@
                                 type="time"
                                 name="intervalo_fim"
                                 class="form-control @error('intervalo_fim') is-invalid @enderror"
-                                value="{{ old('intervalo_fim', $disponibilidade?->intervalo_fim) }}"
+                                value="{{ old('intervalo_fim') }}"
                             >
 
                             @error('intervalo_fim')
@@ -200,7 +204,7 @@
                                 type="time"
                                 name="fim"
                                 class="form-control @error('fim') is-invalid @enderror"
-                                value="{{ old('fim', $disponibilidade->fim) }}"
+                                value="{{ old('fim') }}"
                             >
 
                             @error('fim')
@@ -218,7 +222,6 @@
                             <input
                                 type="password"
                                 name="password"
-                                autocomplete="new-password"
                                 class="form-control @error('password') is-invalid @enderror"
                                 placeholder="Digite uma senha"
                             >
@@ -238,7 +241,6 @@
                             <input
                                 type="password"
                                 name="password_confirmation"
-                                autocomplete="new-password"
                                 class="form-control @error('password') is-invalid @enderror"
                                 placeholder="Confirme a senha"
                             >
@@ -283,7 +285,7 @@
                                             @checked(
                                                 in_array(
                                                     $valor,
-                                                    old('dias_semana', $diasSelecionados)
+                                                    old('dias_semana', [])
                                                 )
                                             )
                                         >
@@ -310,11 +312,12 @@
 
                     <div class="form-actions">
                         <button
-                            type="submit"
+                            type="button"
                             class="btn btn-gold"
+                            onclick="confirmarCriar()"
                         >
                             <i class="bi bi-check-circle me-2"></i>
-                            Editar Barbeiro
+                            Salvar Barbeiro
                         </button>
                     </div>
 
@@ -330,3 +333,37 @@
 </div>
 
 @endsection
+
+@section('scripts')
+<script>
+function confirmarCriar()
+{
+    Swal.fire({
+        title: 'Adicionar Barbeiro',
+        html: `
+            <div>
+                <p class="mt-3 mb-1 text-secondary">
+                    Criar Novo Barbeiro
+                </p>
+            </div>
+        `,
+        icon: 'question',
+        background: '#1e1e1e',
+        color: '#f5f5f5',
+        showCancelButton: true,
+        confirmButtonText: 'Adicionar',
+        cancelButtonText: 'Voltar',
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#495057',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document
+                .getElementById(`formCriar`)
+                .submit();
+        }
+    });
+}
+</script>
+@endsection
+

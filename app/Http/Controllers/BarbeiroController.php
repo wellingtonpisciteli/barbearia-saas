@@ -43,7 +43,7 @@ class BarbeiroController extends Controller
             ->get();
 
         return view(
-            'barbeiro.agendamento.index',
+            'barbeiro.index',
             compact('agendamentos')
         );
     }
@@ -58,7 +58,7 @@ class BarbeiroController extends Controller
         ->get();
 
         return view(
-            'barbeiro.agendamento.clientes',
+            'barbeiro.clientes',
             compact('clientes')
         );
     }
@@ -73,7 +73,7 @@ class BarbeiroController extends Controller
         ->get();
 
         return view(
-            'barbeiro.agendamento.barbeiros',
+            'barbeiro.barbeiros',
             compact('barbeiros')
         );
     }
@@ -81,7 +81,7 @@ class BarbeiroController extends Controller
     public function create()
     {
         return view(
-            'barbeiro.agendamento.criarBarbeiro',
+            'barbeiro.criarBarbeiro',
         );
     }
 
@@ -258,7 +258,7 @@ class BarbeiroController extends Controller
         ->toArray();
 
         return view(
-            'barbeiro.agendamento.editarBarbeiro',
+            'barbeiro.editarBarbeiro',
             compact(
                 'barbeiro',
                 'disponibilidade',
@@ -345,11 +345,13 @@ class BarbeiroController extends Controller
             ->whereNotIn('dia_semana', $novos)
             ->delete();
 
+
         foreach ($novos as $dia) {
             $barbeiro->disponibilidades()->updateOrCreate(
                 [
                     'barbeiro_id' => $barbeiro->id,
-                    'dia_semana' => $dia,
+                    'barbearia_id' => $barbeiro->barbearia_id,
+                    'dia_semana' => (int) $dia,
                 ],
                 [
                     'inicio' => $data['inicio'],

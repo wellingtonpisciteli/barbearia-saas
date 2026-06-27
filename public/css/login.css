@@ -17,7 +17,7 @@ body {
     background: #000000;
     padding: 40px;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(50, 50, 50, 50);
+    box-shadow: 0 10px 20px rgba(50, 50, 50, 50);
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -80,6 +80,36 @@ body {
     margin: auto;
     margin-top: -80px;
     margin-bottom: -80px;
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    width: 100%;
+    padding-right: 45px;
+    box-sizing: border-box;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+}
+
+.password-field button {
+    background-color: transparent;
+}
+
+.password-field button:hover {
+    background-color: transparent;
 }
 
 /* ANIMAÇÕES */

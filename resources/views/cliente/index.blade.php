@@ -254,7 +254,7 @@
             showCancelButton: true,
             confirmButtonText: 'Sim, cancelar',
             cancelButtonText: 'Voltar',
-            confirmButtonColor: '#dc3545',
+            confirmButtonColor: '#B91C1C',
             cancelButtonColor: '#343a40',
             reverseButtons: true
         }).then((result) => {

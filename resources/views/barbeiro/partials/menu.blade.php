@@ -48,14 +48,6 @@
             Barbeiros
         </a>
 
-        <a href="#" class="sidebar-link">
-            Perfil
-        </a>
-
-        <a href="#" class="sidebar-link">
-            Configurações
-        </a>
-
         <form
             action="{{ route('barbeiro.logout') }}"
             method="POST"
@@ -97,14 +89,6 @@
 
         <a href="{{ route('barbeiro.barbeiros') }}" class="sidebar-link">
             Barbeiros
-        </a>
-
-        <a href="#" class="sidebar-link">
-            Perfil
-        </a>
-
-        <a href="#" class="sidebar-link">
-            Configurações
         </a>
 
     </div>
