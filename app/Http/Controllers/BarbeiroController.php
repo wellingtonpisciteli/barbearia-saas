@@ -14,6 +14,7 @@ use App\Models\Disponibilidade;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Servico;
 
 class BarbeiroController extends Controller
 {
@@ -418,6 +419,82 @@ class BarbeiroController extends Controller
             ->with('success', 'Configurações atualizadas com sucesso!');
     }
 
+    public function servicos()
+    {
+        $servicos = Servico::where('barbearia_id', Auth::user()->barbearia_id)
+        ->orderBy('nome')
+        ->get();
+
+        return view('barbeiro.servicos', compact('servicos'));
+    }
+
+    public function servicosCreate()
+    {
+        return view('barbeiro.criarServicos');
+    }
+
+    public function servicosStore(Request $request)
+    {
+        $request->validate([
+            'nome' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/[[:alpha:]]/u',
+            ],            
+            'valor' => ['required', 'regex:/^\d{1,3}(\.\d{3})*(,\d{2})?$|^\d+(,\d{2})?$/'],            
+            'duracao'   => 'required|integer|min:5|max:120',
+        ]);
+
+        $preco = str_replace(',', '.', $request->valor);
+
+        Servico::create([
+            'barbearia_id' => Auth::user()->barbearia_id,
+            'nome'         => $request->nome,
+            'preco'        => $preco,
+            'duracao'      => $request->duracao,
+        ]);
+
+        return redirect()
+            ->route('barbeiro.servicos')
+            ->with('success', 'Serviço cadastrado com sucesso!');
+    }
+
+    public function servicosEdit(int $id)
+    {
+        $servico = Servico::where('barbearia_id', Auth::user()->barbearia_id)
+            ->findOrFail($id);
+
+        return view('barbeiro.editarServicos', compact('servico'));
+    }
+
+    public function servicosUpdate(Request $request, int $id)
+    {
+        $request->validate([
+            'nome' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/[[:alpha:]]/u',
+            ],
+            'valor'   => 'required',
+            'duracao' => 'required|integer|min:5|max:120',
+        ]);
+
+        $servico = Servico::where('barbearia_id', Auth::user()->barbearia_id)
+            ->findOrFail($id);
+
+        $servico->update([
+            'nome'      => $request->nome,
+            'preco'     => str_replace(',', '.', $request->valor),
+            'duracao'   => $request->duracao,
+        ]);
+
+        return redirect()
+            ->route('barbeiro.servicos')
+            ->with('success', 'Serviço atualizado com sucesso!');
+    }
+
     public function cancelar(int $id)
     {
         $agendamento = Agendamento::where(
@@ -455,6 +532,16 @@ class BarbeiroController extends Controller
         return back()->with(
             'success',
             'Barbeiro excluído com sucesso.'
+        );
+    }
+
+    public function destroyServico(Servico $servico)
+    {
+        $servico->delete();
+
+        return back()->with(
+            'success',
+            'Cliente excluído com sucesso.'
         );
     }
 

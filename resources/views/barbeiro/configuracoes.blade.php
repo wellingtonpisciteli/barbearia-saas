@@ -23,7 +23,7 @@
 
                 <div>
                     <h2 class="fw-bold mb-1">
-                        Configurações
+                        Barbearia
                     </h2>
 
                     <p class="text-secondary mb-0">

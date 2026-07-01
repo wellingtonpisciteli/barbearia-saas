@@ -72,6 +72,36 @@ Route::prefix('barbeiro')->group(function () {
             [BarbeiroController::class, 'configuracoesUpdate']
         )->name('barbeiro.configuracoes-atualizar');
 
+        Route::get(
+            '/servicos',
+            [BarbeiroController::class, 'servicos']
+        )->name('barbeiro.servicos');
+
+        Route::get(
+            '/servicos-create',
+            [BarbeiroController::class, 'servicosCreate']
+        )->name('barbeiro.servicos-create');
+
+        Route::post(
+            '/servicos-store',
+            [BarbeiroController::class, 'servicosStore']
+        )->name('barbeiro.servicos-store');
+
+        Route::get(
+            '/servicos-edit/{id}',
+            [BarbeiroController::class, 'servicosEdit']
+        )->name('barbeiro.servicos-edit');
+
+        Route::put(
+            '/servicos-update/{id}',
+            [BarbeiroController::class, 'servicosUpdate']
+        )->name('barbeiro.servicos-update');
+
+        Route::delete(
+            '/servicos-destroy/{servico}',
+            [BarbeiroController::class, 'destroyServico']
+        )->name('barbeiro.servicos-destroy');
+
         Route::delete(
             '/clientes/{cliente}',
             [BarbeiroController::class, 'destroyCliente']

@@ -22,7 +22,7 @@
             <div class="agenda-header mb-4">
                 <div>
                     <h2 class="fw-bold mb-1">
-                        Lista de clientes
+                        Clientes
                     </h2>
 
                     <p class="text-secondary mb-0">

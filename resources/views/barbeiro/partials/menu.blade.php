@@ -49,7 +49,11 @@
         </a>
 
         <a href="{{ route('barbeiro.configuracoes') }}" class="sidebar-link">
-            Configurações
+            Barbearia
+        </a>
+
+        <a href="{{ route('barbeiro.servicos') }}" class="sidebar-link">
+            Serviços
         </a>
 
         <form
@@ -96,7 +100,11 @@
         </a>
 
         <a href="{{ route('barbeiro.configuracoes') }}" class="sidebar-link">
-            Configurações
+            Barbearia
+        </a>
+
+        <a href="{{ route('barbeiro.servicos') }}" class="sidebar-link">
+            Serviços
         </a>
 
     </div>
