@@ -37,7 +37,6 @@ Route::prefix('barbeiro')->group(function () {
             [BarbeiroController::class, 'store']
         )->name('barbeiro.criarBarbeiro');
 
-
         Route::get(
             '/createEditar/{id}',
             [BarbeiroController::class, 'createEditar']
@@ -47,7 +46,6 @@ Route::prefix('barbeiro')->group(function () {
             '/update/{id}',
             [BarbeiroController::class, 'update']
         )->name('barbeiro.update');
-
 
         Route::get(
             '/agendamentos',
@@ -63,6 +61,16 @@ Route::prefix('barbeiro')->group(function () {
             '/barbeiros',
             [BarbeiroController::class, 'barbeiros']
         )->name('barbeiro.barbeiros');
+
+        Route::get(
+            '/configuracoes',
+            [BarbeiroController::class, 'configuracoes']
+        )->name('barbeiro.configuracoes');
+
+        Route::post(
+            '/configuracoes-atualizar',
+            [BarbeiroController::class, 'configuracoesUpdate']
+        )->name('barbeiro.configuracoes-atualizar');
 
         Route::delete(
             '/clientes/{cliente}',

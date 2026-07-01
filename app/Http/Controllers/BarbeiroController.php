@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use App\Models\Disponibilidade;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BarbeiroController extends Controller
 {
@@ -363,6 +365,57 @@ class BarbeiroController extends Controller
         }
 
         return redirect()->route('barbeiro.barbeiros');
+    }
+
+    public function configuracoes()
+    {
+        $barbearia = Auth::user()->barbearia;
+
+        return view(
+            'barbeiro.configuracoes',
+            compact('barbearia')
+        );
+    }
+
+    public function configuracoesUpdate(Request $request)
+    {
+        $request->validate([
+            'nome'       => 'required|string|max:255',
+            'telefone'   => 'required|string|max:20',
+            'instagram'  => 'nullable|string|max:255',
+            'endereco'   => 'nullable|string|max:255',
+            'cidade'   => 'nullable|string|max:50',
+            'logo'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        $barbearia = Auth::user()->barbearia;
+
+        $barbearia->nome = $request->nome;
+        $barbearia->slug = Str::slug($request->nome);
+        $barbearia->telefone = preg_replace('/\D/', '', $request->telefone);
+        $barbearia->instagram = $request->instagram;
+        $barbearia->cidade = $request->cidade;
+        $barbearia->endereco = $request->endereco;
+
+        // LOGO
+        if ($request->hasFile('logo')) {
+
+            // remove antiga se existir
+            if ($barbearia->logo) {
+                Storage::disk('public')->delete($barbearia->logo);
+            }
+
+            $path = $request->file('logo')
+                ->store('barbearias/logos', 'public');
+
+            $barbearia->logo = $path;
+        }
+
+        $barbearia->save();
+
+        return redirect()
+            ->route('barbeiro.configuracoes')
+            ->with('success', 'Configurações atualizadas com sucesso!');
     }
 
     public function cancelar(int $id)

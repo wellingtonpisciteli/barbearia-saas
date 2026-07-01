@@ -19,7 +19,7 @@
         <div class="text-center">
 
             <img
-                src="{{ asset('img/barbearia/logo.png') }}"
+                src="{{ $barbearia->logo_url ?? asset('img/barbearia/logo.png') }}"
                 alt="Logo"
                 class="logo mb-5"
             >

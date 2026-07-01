@@ -33,7 +33,7 @@
                     </li>
 
                     <li>
-                        {{ $barbearia->email ?? 'contato@fadeos.com' }}
+                        {{ $barbearia->instagram ?? 'contato@fadeos.com' }}
                     </li>
 
                 </ul>

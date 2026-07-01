@@ -30,4 +30,20 @@ class Barbearia extends Model
     {
         return $this->hasMany(Disponibilidade::class);
     }
+
+    public function getTelefoneFormatadoAttribute()
+    {
+        return preg_replace(
+            '/(\d{2})(\d{5})(\d{4})/',
+            '($1) $2-$3',
+            $this->telefone
+        );
+    }
+
+    public function getLogoUrlAttribute()
+    {
+        return $this->logo
+            ? asset('storage/' . $this->logo)
+            : asset('img/barbearia/logo.png');
+    }
 }
