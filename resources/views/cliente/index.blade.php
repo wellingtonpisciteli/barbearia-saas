@@ -21,7 +21,7 @@
             <img
                 src="{{ $barbearia->logo_url ?? asset('img/barbearia/logo.png') }}"
                 alt="Logo"
-                class="logo mb-5"
+                class="logo"
             >
 
             <h2 class="fw-bold mb-1">
