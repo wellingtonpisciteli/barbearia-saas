@@ -18,7 +18,7 @@ use App\Models\Servico;
 
 class BarbeiroController extends Controller
 {
-    public function index()
+    public function agendamentos()
     {
         $agendamentos = Agendamento::with([
                 'cliente',
@@ -46,7 +46,7 @@ class BarbeiroController extends Controller
             ->get();
 
         return view(
-            'barbeiro.index',
+            'barbeiro.agendamentos',
             compact('agendamentos')
         );
     }
@@ -81,14 +81,14 @@ class BarbeiroController extends Controller
         );
     }
 
-    public function create()
+    public function createBarbeiro()
     {
         return view(
-            'barbeiro.criarBarbeiro',
+            'barbeiro.criarBarbeiro'
         );
     }
 
-    public function store(Request $request)
+    public function storeBarbeiro(Request $request)
     {
         $barbearia_id = Auth::user()->barbearia_id;
 
@@ -248,7 +248,7 @@ class BarbeiroController extends Controller
         return redirect()->route('barbeiro.barbeiros');
     }
 
-    public function createEditar(int $id)
+    public function editarBarbeiro(int $id)
     {
         $barbeiro = User::findOrFail($id);
 
@@ -271,7 +271,7 @@ class BarbeiroController extends Controller
     }
 
 
-    public function update(Request $request, int $id)
+    public function updateBarbeiro(Request $request, int $id)
     {
         $barbeiro = User::findOrFail($id);
 
@@ -368,7 +368,7 @@ class BarbeiroController extends Controller
         return redirect()->route('barbeiro.barbeiros');
     }
 
-    public function configuracoes()
+    public function barbearia()
     {
         $barbearia = Auth::user()->barbearia;
 
@@ -378,7 +378,7 @@ class BarbeiroController extends Controller
         );
     }
 
-    public function configuracoesUpdate(Request $request)
+    public function barbeariaUpdate(Request $request)
     {
         $request->validate([
             'nome'       => 'required|string|max:255',
@@ -460,7 +460,7 @@ class BarbeiroController extends Controller
             ->with('success', 'Serviço cadastrado com sucesso!');
     }
 
-    public function servicosEdit(int $id)
+    public function servicosEditar(int $id)
     {
         $servico = Servico::where('barbearia_id', Auth::user()->barbearia_id)
             ->findOrFail($id);

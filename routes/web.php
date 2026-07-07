@@ -7,6 +7,42 @@ use App\Http\Controllers\FCMController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\DashboardController;
+
+// =========================
+// ADMIN
+// =========================
+Route::prefix('admin')->group(function () {
+
+    // Login
+    Route::get(
+        '/login',
+        [LoginController::class, 'login']
+    )->name('admin.login');
+
+    Route::post(
+        '/login',
+        [LoginController::class, 'autenticar']
+    )->name('admin.autenticar');
+
+
+    // Rotas protegidas
+    Route::middleware(['admin.auth', 'admin'])->group(function () {
+
+        Route::post(
+            '/logout',
+            [LoginController::class, 'logout']
+        )->name('admin.logout');
+
+        Route::get(
+            '/',
+            [DashboardController::class, 'index']
+        )->name('admin.dashboard');
+
+    });
+
+});
 
 
 // =========================
@@ -28,29 +64,9 @@ Route::prefix('barbeiro')->group(function () {
             ->name('barbeiro.logout');
 
         Route::get(
-            '/novoBarbeiro',
-            [BarbeiroController::class, 'create']
-        )->name('barbeiro.novoBarbeiro');
-
-        Route::post(
-            '/criarBarbeiro',
-            [BarbeiroController::class, 'store']
-        )->name('barbeiro.criarBarbeiro');
-
-        Route::get(
-            '/createEditar/{id}',
-            [BarbeiroController::class, 'createEditar']
-        )->name('barbeiro.createEditar');
-
-        Route::post(
-            '/update/{id}',
-            [BarbeiroController::class, 'update']
-        )->name('barbeiro.update');
-
-        Route::get(
             '/agendamentos',
-            [BarbeiroController::class, 'index']
-        )->name('barbeiro.agendamento.index');
+            [BarbeiroController::class, 'agendamentos']
+        )->name('barbeiro.agendamentos');
 
         Route::get(
             '/clientes',
@@ -63,13 +79,33 @@ Route::prefix('barbeiro')->group(function () {
         )->name('barbeiro.barbeiros');
 
         Route::get(
+            '/novoBarbeiro',
+            [BarbeiroController::class, 'createBarbeiro']
+        )->name('barbeiro.novoBarbeiro');
+        
+        Route::post(
+            '/criarBarbeiro',
+            [BarbeiroController::class, 'storeBarbeiro']
+        )->name('barbeiro.criarBarbeiro');
+
+        Route::get(
+            '/createEditar/{id}',
+            [BarbeiroController::class, 'editarBarbeiro']
+        )->name('barbeiro.createEditar');
+
+        Route::post(
+            '/update/{id}',
+            [BarbeiroController::class, 'updateBarbeiro']
+        )->name('barbeiro.update');
+
+        Route::get(
             '/configuracoes',
-            [BarbeiroController::class, 'configuracoes']
+            [BarbeiroController::class, 'barbearia']
         )->name('barbeiro.configuracoes');
 
         Route::post(
             '/configuracoes-atualizar',
-            [BarbeiroController::class, 'configuracoesUpdate']
+            [BarbeiroController::class, 'barbeariaUpdate']
         )->name('barbeiro.configuracoes-atualizar');
 
         Route::get(
@@ -89,7 +125,7 @@ Route::prefix('barbeiro')->group(function () {
 
         Route::get(
             '/servicos-edit/{id}',
-            [BarbeiroController::class, 'servicosEdit']
+            [BarbeiroController::class, 'servicosEditar']
         )->name('barbeiro.servicos-edit');
 
         Route::put(

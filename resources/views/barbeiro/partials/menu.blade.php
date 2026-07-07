@@ -36,7 +36,7 @@
 
     <div class="offcanvas-body d-flex flex-column">
 
-        <a href="{{ route('barbeiro.agendamento.index') }}" class="sidebar-link">
+        <a href="{{ route('barbeiro.agendamentos') }}" class="sidebar-link">
             Agenda
         </a>
 
@@ -54,6 +54,10 @@
 
         <a href="{{ route('barbeiro.servicos') }}" class="sidebar-link">
             Serviços
+        </a>
+
+        <a href="{{ route('cliente.disponibilidade', auth()->user()->barbearia->slug) }}" target="_blank" class="sidebar-link">
+            Área do Cliente
         </a>
 
         <form
@@ -87,7 +91,7 @@
         </h3>
         <hr>
 
-        <a href="{{ route('barbeiro.agendamento.index') }}" class="sidebar-link">
+        <a href="{{ route('barbeiro.agendamentos') }}" class="sidebar-link">
             Agenda
         </a>
 
@@ -105,6 +109,10 @@
 
         <a href="{{ route('barbeiro.servicos') }}" class="sidebar-link">
             Serviços
+        </a>
+
+        <a href="{{ route('cliente.disponibilidade', auth()->user()->barbearia->slug) }}" target="_blank" class="sidebar-link">
+            Área do Cliente
         </a>
 
     </div>

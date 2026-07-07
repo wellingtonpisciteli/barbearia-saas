@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('barbeiro.agendamento.index');
+        return redirect()->route('barbeiro.agendamentos');
     }
 
     public function logout(Request $request)
