@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\BarbeariaController;
 
 // =========================
 // ADMIN
@@ -39,6 +40,21 @@ Route::prefix('admin')->group(function () {
             '/',
             [DashboardController::class, 'index']
         )->name('admin.dashboard');
+
+        Route::get(
+            '/barbearias',
+            [BarbeariaController::class, 'index']
+        )->name('admin.barbearias');
+
+        Route::get(
+            '/barbearias/create',
+            [BarbeariaController::class, 'create']
+        )->name('admin.barbearias.create');
+
+        Route::post(
+            '/barbearias',
+            [BarbeariaController::class, 'store']
+        )->name('admin.barbearias.store');
 
     });
 

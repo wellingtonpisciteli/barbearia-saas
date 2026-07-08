@@ -203,8 +203,7 @@
                                 type="time"
                                 name="fim"
                                 class="form-control @error('fim') is-invalid @enderror"
-                                value="{{ old('fim', $disponibilidade->fim) }}"
-                            >
+                                value="{{ old('fim', $disponibilidade->fim ?? '') }}"                            >
 
                             @error('fim')
                                 <div class="invalid-feedback">

@@ -13,12 +13,26 @@ class Barbearia extends Model
         'nome',
         'slug',
         'telefone',
-        'endereco'
+        'endereco',
+        'ativo',
+        'instagram',
+        'logo',
+        'cidade'
+    ];
+
+    protected $casts = [
+        'ativo' => 'boolean',
     ];
 
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function admins()
+    {
+        return $this->hasMany(User::class)
+            ->where('role', User::ROLE_ADMIN);
     }
 
     public function agendamentos()

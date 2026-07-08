@@ -25,7 +25,7 @@
         </a>
 
 
-        <a href="#">
+        <a href="{{ route('admin.barbearias') }}">
 
             <i class="bi bi-shop"></i>
 

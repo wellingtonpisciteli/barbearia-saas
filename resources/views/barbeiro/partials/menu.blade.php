@@ -37,26 +37,32 @@
     <div class="offcanvas-body d-flex flex-column">
 
         <a href="{{ route('barbeiro.agendamentos') }}" class="sidebar-link">
+            <i class="bi-calendar-check me-1"></i>
             Agenda
         </a>
 
         <a href="{{ route('barbeiro.clientes') }}" class="sidebar-link">
+            <i class="bi bi-people me-1"></i>
             Clientes
         </a>
 
         <a href="{{ route('barbeiro.barbeiros') }}" class="sidebar-link">
+            <i class="bi bi-people me-1"></i>
             Barbeiros
         </a>
 
         <a href="{{ route('barbeiro.configuracoes') }}" class="sidebar-link">
+            <i class="bi bi-shop me-1"></i>
             Barbearia
         </a>
 
         <a href="{{ route('barbeiro.servicos') }}" class="sidebar-link">
+            <i class="bi bi-scissors me-1"></i>
             Serviços
         </a>
 
         <a href="{{ route('cliente.disponibilidade', auth()->user()->barbearia->slug) }}" target="_blank" class="sidebar-link">
+            <i class="bi bi-person"></i>
             Área do Cliente
         </a>
 
@@ -92,26 +98,32 @@
         <hr>
 
         <a href="{{ route('barbeiro.agendamentos') }}" class="sidebar-link">
+            <i class="bi bi-calendar-check me-1"></i>
             Agenda
         </a>
 
         <a href="{{ route('barbeiro.clientes') }}" class="sidebar-link">
+            <i class="bi bi-people me-1"></i>
             Clientes
         </a>
 
         <a href="{{ route('barbeiro.barbeiros') }}" class="sidebar-link">
+            <i class="bi bi-people me-1"></i>
             Barbeiros
         </a>
 
         <a href="{{ route('barbeiro.configuracoes') }}" class="sidebar-link">
+            <i class="bi bi-shop me-1"></i>
             Barbearia
         </a>
 
         <a href="{{ route('barbeiro.servicos') }}" class="sidebar-link">
+            <i class="bi bi-scissors me-1"></i>
             Serviços
         </a>
 
         <a href="{{ route('cliente.disponibilidade', auth()->user()->barbearia->slug) }}" target="_blank" class="sidebar-link">
+            <i class="bi bi-person"></i>
             Área do Cliente
         </a>
 
