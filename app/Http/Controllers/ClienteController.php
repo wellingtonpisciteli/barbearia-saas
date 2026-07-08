@@ -22,6 +22,11 @@ class ClienteController extends Controller
     {
         $barbearia = Barbearia::where('slug', $slug)->firstOrFail();
 
+        if (!$barbearia->ativo) {
+            return view('cliente.barbearia-desativada', compact('barbearia'));
+        }
+
+
         $barbeiros = User::where(
             'barbearia_id',
             $barbearia->id
@@ -75,14 +80,28 @@ class ClienteController extends Controller
 
     public function show(Request $request, string $slug, User $user, $date = null)
     {
-        $servico_id = $request->servico_id;
-        $servico = Servico::findOrFail($servico_id);
+        $barbearia = Barbearia::where('slug', $slug)->firstOrFail();
 
+        // Bloqueia acesso de barbearia desativada
+        if (!$barbearia->ativo) {
+            return view(
+                'cliente.barbearia-desativada',
+                compact('barbearia')
+            );
+        }
+
+        // Bloqueia barbeiro caso ele não pertença à barbearia da URL
+        abort_if($user->barbearia_id !== $barbearia->id, 404);
+
+        $servico_id = $request->servico_id;
+        $servico = Servico::where('id', $servico_id)
+            ->where('barbearia_id', $barbearia->id)
+            ->where('ativo', true)
+            ->firstOrFail();
+            
         $duracao = $servico->duracao;
 
         $data = $date ? Carbon::parse($date) : Carbon::today();
-
-        $barbearia = Barbearia::where('slug', $slug)->firstOrFail();
 
         $cookieName = 'cliente_token_' . $barbearia->slug;
 
@@ -106,9 +125,6 @@ class ClienteController extends Controller
 
             $status = $agendamentoConfirmado?->status ?? '';
         }
-
-        // Bloqueia barbeiro caso ele não pertença à barbearia da URL
-        abort_if($user->barbearia_id !== $barbearia->id, 404);
 
         // Busca os horários de trabalho ativos do barbeiro para a data selecionada
         $disponibilidades = Disponibilidade::where('barbeiro_id', $user->id)

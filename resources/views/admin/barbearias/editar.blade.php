@@ -1,12 +1,11 @@
 @extends('admin.layouts.app')
 
-
 @section('content')
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <h2 class="mb-0">
-        Nova Barbearia
+        Editar Barbearia
     </h2>
 
     <a href="{{ route('admin.barbearias') }}" class="btn btn-secondary">
@@ -20,14 +19,14 @@
 
     <div class="card-body">
 
-
-        <form 
-            id="formCriar" 
-            action="{{ route('admin.barbearias.store') }}" 
+        <form
+            id="formEditar"
+            action="{{ route('admin.barbearias.update', $barbearia->id) }}"
             method="POST"
         >
 
             @csrf
+            @method('PUT')
 
 
             <h5 class="mb-3">
@@ -37,25 +36,21 @@
 
             <div class="row">
 
-
                 <div class="col-md-6 mb-3">
 
                     <label class="form-label">
                         Nome da Barbearia
                     </label>
 
-                    <input 
+                    <input
                         type="text"
                         name="nome"
                         class="form-control"
-                        placeholder="Ex: Fade Barber"
-                        value="{{ old('nome') }}"
+                        value="{{ old('nome', $barbearia->nome) }}"
                     >
 
                     @error('nome')
-                        <small class="text-danger">
-                            {{ $message }}
-                        </small>
+                        <small class="text-danger">{{ $message }}</small>
                     @enderror
 
                 </div>
@@ -67,18 +62,15 @@
                         Slug
                     </label>
 
-                    <input 
+                    <input
                         type="text"
                         name="slug"
                         class="form-control"
-                        placeholder="fade-barber"
-                        value="{{ old('slug') }}"
+                        value="{{ old('slug', $barbearia->slug) }}"
                     >
 
                     @error('slug')
-                        <small class="text-danger">
-                            {{ $message }}
-                        </small>
+                        <small class="text-danger">{{ $message }}</small>
                     @enderror
 
                 </div>
@@ -90,11 +82,11 @@
                         Telefone
                     </label>
 
-                    <input 
+                    <input
                         type="text"
                         name="telefone"
                         class="form-control"
-                        value="{{ old('telefone') }}"
+                        value="{{ old('telefone', $barbearia->telefone) }}"
                     >
 
                 </div>
@@ -106,15 +98,14 @@
                         Endereço
                     </label>
 
-                    <input 
+                    <input
                         type="text"
                         name="endereco"
                         class="form-control"
-                        value="{{ old('endereco') }}"
+                        value="{{ old('endereco', $barbearia->endereco) }}"
                     >
 
                 </div>
-
 
             </div>
 
@@ -129,86 +120,84 @@
 
             <div class="row">
 
+                @foreach($barbearia->admins as $admin)
 
-                <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nome</label>
 
-                    <label class="form-label">
-                        Nome
-                    </label>
+                        <input
+                            type="text"
+                            name="admins[{{ $admin->id }}][name]"
+                            class="form-control"
+                            value="{{ old("admins.{$admin->id}.name", $admin->name) }}"
+                        >
+                    </div>
 
-                    <input 
-                        type="text"
-                        name="admin_nome"
-                        class="form-control"
-                        value="{{ old('admin_nome') }}"
-                    >
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
 
-                </div>
+                        <input
+                            type="email"
+                            name="admins[{{ $admin->id }}][email]"
+                            class="form-control"
+                            value="{{ old("admins.{$admin->id}.email", $admin->email) }}"
+                        >
+                    </div>
 
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label">
-                        Email
-                    </label>
-
-                    <input 
-                        type="email"
-                        name="admin_email"
-                        class="form-control"
-                        value="{{ old('admin_email') }}"
-                    >
-
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label">
-                        Senha
-                    </label>
-
-                    <input 
-                        type="password"
-                        name="admin_password"
-                        class="form-control"
-                    >
-
-                </div>
-
+                @endforeach
 
             </div>
 
-            <button 
-                class="btn btn-primary"
-                type="button"
-                onclick="confirmarCriar()"
-            >
-                <i class="bi bi-check-lg"></i>
-                Salvar Barbearia
-            </button>
 
+            <div class="d-flex justify-content-between align-items-center mt-4">
+
+                <div class="form-check form-switch">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="ativo"
+                        name="ativo"
+                        value="1"
+                        {{ old('ativo', $barbearia->ativo) ? 'checked' : '' }}
+                    >
+
+                    <label class="form-check-label" for="ativo">
+                        Barbearia ativa
+                    </label>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    onclick="confirmarEditar()"
+                >
+                    <i class="bi bi-check-lg"></i>
+                    Salvar Alterações
+                </button>
+
+            </div>
 
         </form>
-
 
     </div>
 
 </div>
 
-
 @endsection
 
 @section('scripts')
 <script>
-function confirmarCriar()
+
+function confirmarEditar()
 {
     Swal.fire({
-        title: 'Adicionar Barbearia',
+        title: 'Salvar Alterações',
         html: `
             <div>
                 <p class="mt-3 mb-1 text-secondary">
-                    Criar Nova Barbearia
+                    Deseja atualizar esta barbearia?
                 </p>
             </div>
         `,
@@ -216,7 +205,7 @@ function confirmarCriar()
         background: '#1e1e1e',
         color: '#f5f5f5',
         showCancelButton: true,
-        confirmButtonText: 'Adicionar',
+        confirmButtonText: 'Salvar',
         cancelButtonText: 'Voltar',
         confirmButtonColor: '#0d6efd',
         cancelButtonColor: '#495057',
@@ -224,10 +213,11 @@ function confirmarCriar()
     }).then((result) => {
         if (result.isConfirmed) {
             document
-                .getElementById(`formCriar`)
+                .getElementById('formEditar')
                 .submit();
         }
     });
 }
+
 </script>
 @endsection

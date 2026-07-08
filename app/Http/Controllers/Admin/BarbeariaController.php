@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class BarbeariaController extends Controller
 {
@@ -151,5 +153,101 @@ class BarbeariaController extends Controller
         return redirect()
             ->route('admin.barbearias')
             ->with('success', 'Barbearia criada com sucesso!');
+    }
+
+    public function edit(int $id)
+    {
+        $barbearia = Barbearia::findOrFail($id);
+
+        return view(
+            'admin.barbearias.editar',
+            compact('barbearia')
+        );
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $request->validate([
+            'nome' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('barbearias', 'slug')->ignore($id)
+            ],
+
+            'telefone' => [
+                'nullable',
+                'string',
+                'max:20'
+            ],
+
+            'endereco' => [
+                'nullable',
+                'string',
+                'max:255'
+            ],
+
+            'ativo' => [
+                'nullable',
+                'boolean'
+            ],
+
+            'admins' => [
+                'required',
+                'array'
+            ],
+
+            'admins.*.name' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+
+            'admins.*.email' => [
+                'required',
+                'email',
+                'max:255'
+            ],
+        ]);
+
+        $barbearia = Barbearia::findOrFail($id);
+
+        $barbearia->update([
+            'nome'      => $request->nome,
+            'slug'      => Str::slug($request->slug),
+            'telefone'  => $request->telefone,
+            'endereco'  => $request->endereco,
+            'ativo'     => $request->boolean('ativo'),
+        ]);
+
+        foreach ($request->admins as $adminId => $dados) {
+
+            $admin = User::where('id', $adminId)
+                ->where('barbearia_id', $barbearia->id)
+                ->where('role', User::ROLE_ADMIN)
+                ->first();
+
+            if (!$admin) {
+                continue;
+            }
+
+            $admin->update([
+                'name'  => $dados['name'],
+                'email' => $dados['email'],
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.barbearias')
+            ->with(
+                'success',
+                'Barbearia atualizada com sucesso.'
+            );
     }
 }

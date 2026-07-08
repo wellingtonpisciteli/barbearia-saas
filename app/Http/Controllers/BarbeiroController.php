@@ -18,8 +18,28 @@ use App\Models\Servico;
 
 class BarbeiroController extends Controller
 {
+    private function verificarBarbeariaAtiva()
+    {
+        $user = Auth::user();
+
+        $barbearia = Barbearia::findOrFail($user->barbearia_id);
+
+        if (!$barbearia->ativo) {
+            return view(
+                'barbeiro.barbearia-desativada',
+                compact('barbearia')
+            );
+        }
+
+        return null;
+    }
+
     public function agendamentos()
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         $agendamentos = Agendamento::with([
                 'cliente',
                 'servico'
@@ -53,6 +73,10 @@ class BarbeiroController extends Controller
 
     public function clientes()
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         $clientes = Cliente::where(
             'barbearia_id',
             Auth::user()->barbearia_id
@@ -68,6 +92,10 @@ class BarbeiroController extends Controller
 
     public function barbeiros()
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         $barbeiros = User::where(
             'barbearia_id',
             Auth::user()->barbearia_id
@@ -83,6 +111,10 @@ class BarbeiroController extends Controller
 
     public function createBarbeiro()
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         return view(
             'barbeiro.criarBarbeiro'
         );
@@ -250,6 +282,10 @@ class BarbeiroController extends Controller
 
     public function editarBarbeiro(int $id)
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         $barbeiro = User::findOrFail($id);
 
         $disponibilidade = Disponibilidade::where('barbeiro_id', $id)->first();
@@ -370,6 +406,10 @@ class BarbeiroController extends Controller
 
     public function barbearia()
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         $barbearia = Auth::user()->barbearia;
 
         return view(
@@ -421,6 +461,10 @@ class BarbeiroController extends Controller
 
     public function servicos()
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         $servicos = Servico::where('barbearia_id', Auth::user()->barbearia_id)
         ->orderBy('nome')
         ->get();
@@ -430,6 +474,10 @@ class BarbeiroController extends Controller
 
     public function servicosCreate()
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         return view('barbeiro.criarServicos');
     }
 
@@ -462,6 +510,10 @@ class BarbeiroController extends Controller
 
     public function servicosEditar(int $id)
     {
+        if ($bloqueio = $this->verificarBarbeariaAtiva()) {
+            return $bloqueio;
+        }
+
         $servico = Servico::where('barbearia_id', Auth::user()->barbearia_id)
             ->findOrFail($id);
 

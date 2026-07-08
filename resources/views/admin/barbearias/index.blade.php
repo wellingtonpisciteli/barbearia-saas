@@ -104,12 +104,12 @@
 
                         <td class="text-end">
 
-                            <a href="#" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye"></i>
+                            <a href="#" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
                             </a>
 
 
-                            <a href="#" class="btn btn-sm btn-outline-secondary">
+                            <a href="{{ route('admin.barbearias.edit', $barbearia->id) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>
 

@@ -56,6 +56,15 @@ Route::prefix('admin')->group(function () {
             [BarbeariaController::class, 'store']
         )->name('admin.barbearias.store');
 
+        Route::get(
+            '/barbearias/{id}/edit',
+            [BarbeariaController::class, 'edit']
+        )->name('admin.barbearias.edit');
+
+        Route::put(
+            '/barbearias/{id}',
+            [BarbeariaController::class, 'update']
+        )->name('admin.barbearias.update');
     });
 
 });
