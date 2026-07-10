@@ -163,7 +163,7 @@
                     >
 
                     <label class="form-check-label" for="ativo">
-                        Barbearia ativa
+                        Ativo
                     </label>
 
                 </div>

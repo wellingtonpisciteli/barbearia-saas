@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Barbearia;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use App\Models\Agendamento;
+use App\Models\User;
+use App\Models\Cliente;
+use App\Models\Disponibilidade;
+use App\Models\Servico;
 
 class BarbeariaController extends Controller
 {
@@ -249,5 +253,28 @@ class BarbeariaController extends Controller
                 'success',
                 'Barbearia atualizada com sucesso.'
             );
+    }
+
+    public function destroyBarbearia(Barbearia $barbearia)
+    {
+        DB::transaction(function () use ($barbearia) {
+
+            Agendamento::where('barbearia_id', $barbearia->id)->delete();
+
+            Disponibilidade::where('barbearia_id', $barbearia->id)->delete();
+
+            Cliente::where('barbearia_id', $barbearia->id)->delete();
+
+            Servico::where('barbearia_id', $barbearia->id)->delete();
+
+            User::where('barbearia_id', $barbearia->id)->delete();
+
+            $barbearia->delete();
+        });
+
+        return back()->with(
+            'success',
+            'Barbearia excluída com sucesso.'
+        );
     }
 }

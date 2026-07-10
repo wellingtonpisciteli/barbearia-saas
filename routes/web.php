@@ -65,6 +65,11 @@ Route::prefix('admin')->group(function () {
             '/barbearias/{id}',
             [BarbeariaController::class, 'update']
         )->name('admin.barbearias.update');
+
+        Route::delete(
+            '/barbearias/{barbearia}',
+            [BarbeariaController::class, 'destroyBarbearia']
+        )->name('admin.barbearias.destroyBarbearia');
     });
 
 });

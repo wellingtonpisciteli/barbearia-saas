@@ -104,9 +104,24 @@
 
                         <td class="text-end">
 
-                            <a href="#" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash"></i>
-                            </a>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-danger"                                    
+                                onclick="confirmarExcluir(
+                                    {{ $barbearia->id }},
+                                    '{{ addslashes($barbearia->nome) }}'
+                                )"
+                                >
+                                    <i class="bi bi-trash"></i>
+                            </button>
+
+                            <form action="{{ route('admin.barbearias.destroyBarbearia', $barbearia->id) }}"
+                                id="formExcluir-{{ $barbearia->id }}"
+                                method="POST"
+                                style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
 
 
                             <a href="{{ route('admin.barbearias.edit', $barbearia->id) }}" class="btn btn-sm btn-outline-primary">
@@ -129,4 +144,38 @@
 </div>
 
 
+@endsection
+
+@section('scripts')
+<script>
+function confirmarExcluir(id, nome)
+{
+    Swal.fire({
+        title: 'Excluir Barbearia',
+        html: `
+            <div>
+                <p class="mt-3 mb-1 text-secondary">
+                    Barbearia
+                </p>
+                <h4>${nome}</h4>
+            </div>
+        `,
+        icon: 'question',
+        background: '#1e1e1e',
+        color: '#f5f5f5',
+        showCancelButton: true,
+        confirmButtonText: 'Excluir',
+        cancelButtonText: 'Voltar',
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#495057',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document
+                .getElementById(`formExcluir-${id}`)
+                .submit();
+        }
+    });
+}
+</script>
 @endsection

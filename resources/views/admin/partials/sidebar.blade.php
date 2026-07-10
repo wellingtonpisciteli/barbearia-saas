@@ -34,31 +34,31 @@
         </a>
 
 
-        <a href="#">
+        {{-- <a href="#">
 
             <i class="bi bi-people"></i>
 
             Clientes
 
-        </a>
+        </a> --}}
 
 
-        <a href="#">
+        {{-- <a href="#">
 
             <i class="bi bi-box-seam"></i>
 
             Planos
 
-        </a>
+        </a> --}}
 
 
-        <a href="#">
+        {{-- <a href="#">
 
             <i class="bi bi-credit-card"></i>
 
             Assinaturas
 
-        </a>
+        </a> --}}
 
 
         <a href="#">
