@@ -40,6 +40,8 @@ class BarbeiroController extends Controller
             return $bloqueio;
         }
 
+        $barbeiroId = Auth::id();
+
         $agendamentos = Agendamento::with([
                 'cliente',
                 'servico'
@@ -65,9 +67,34 @@ class BarbeiroController extends Controller
             ->orderBy('inicio')
             ->get();
 
+        $agendamentosHoje = Agendamento::where('barbeiro_id', $barbeiroId)
+            ->whereIn('status', ['confirmado', 'finalizado'])
+            ->whereDate('inicio', Carbon::today())
+            ->count();
+
+        $agendamentosMes = Agendamento::where('barbeiro_id', $barbeiroId)
+            ->whereIn('status', ['confirmado', 'finalizado'])
+            ->whereMonth('inicio', Carbon::now()->month)
+            ->whereYear('inicio', Carbon::now()->year)
+            ->count();
+
+        $agendamentosTotal = Agendamento::where('barbeiro_id', $barbeiroId)
+            ->whereIn('status', ['confirmado', 'finalizado'])
+            ->count();
+
+        $agendamentosCancelados = Agendamento::where('barbeiro_id', $barbeiroId)
+            ->where('status', 'cancelado')
+            ->count();
+
         return view(
             'barbeiro.agendamentos',
-            compact('agendamentos')
+            compact(
+                'agendamentos',
+                'agendamentosHoje',
+                'agendamentosMes',
+                'agendamentosTotal',
+                'agendamentosCancelados'
+            )
         );
     }
 

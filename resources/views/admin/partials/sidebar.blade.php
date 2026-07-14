@@ -61,7 +61,7 @@
         </a> --}}
 
 
-        <a href="#">
+        <a href="{{ route('admin.financeiro') }}">
 
             <i class="bi bi-cash-stack"></i>
 

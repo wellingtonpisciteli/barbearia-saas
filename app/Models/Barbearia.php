@@ -60,4 +60,9 @@ class Barbearia extends Model
             ? asset('storage/' . $this->logo)
             : asset('img/barbearia/logo.png');
     }
+
+    public function assinatura()
+    {
+        return $this->hasOne(Assinatura::class);
+    }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BarbeariaController;
+use App\Http\Controllers\Admin\FinanceiroController;
 
 // =========================
 // ADMIN
@@ -70,6 +71,11 @@ Route::prefix('admin')->group(function () {
             '/barbearias/{barbearia}',
             [BarbeariaController::class, 'destroyBarbearia']
         )->name('admin.barbearias.destroyBarbearia');
+
+        Route::get(
+            '/financeiro',
+            [FinanceiroController::class, 'index']
+        )->name('admin.financeiro');
     });
 
 });

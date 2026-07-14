@@ -98,6 +98,92 @@
 
             @endforelse
 
+            <hr style="margin-top: 30px">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon">
+                            <i class="bi bi-calendar-day"></i>
+                        </div>
+
+                        <div>
+
+                            <small>Agendamentos de hoje</small>
+
+                            <h2>{{ $agendamentosHoje }}</h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon">
+                            <i class="bi bi-calendar-week"></i>
+                        </div>
+
+                        <div>
+
+                            <small>Agendamentos do mês</small>
+
+                            <h2>{{ $agendamentosMes }}</h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                        <div>
+
+                            <small>Total de agendamentos</small>
+
+                            <h2>{{ $agendamentosTotal }}</h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                        <div>
+
+                            <small>Total de cancelados</small>
+
+                            <h2>{{ $agendamentosCancelados }}</h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
         
         @include('barbeiro.partials.footer')
