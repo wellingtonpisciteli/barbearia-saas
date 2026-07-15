@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Cliente;
 use App\Models\Disponibilidade;
 use App\Models\Servico;
+use App\Models\Assinatura;
 
 class BarbeariaController extends Controller
 {
@@ -21,7 +22,7 @@ class BarbeariaController extends Controller
     {
         $barbearias = Barbearia::with([
             'admins',
-            'users'
+            'users',
         ])->get();
         
 
@@ -103,53 +104,42 @@ class BarbeariaController extends Controller
 
         DB::transaction(function () use ($dados, $request) {
 
-
             $logo = null;
 
-
             if ($request->hasFile('logo')) {
-
                 $logo = $request->file('logo')
                     ->store('barbearias', 'public');
-
             }
 
-
             $barbearia = Barbearia::create([
-
                 'nome' => $dados['nome'],
-
                 'slug' => $dados['slug'],
-
                 'telefone' => $dados['telefone'] ?? null,
-
                 'endereco' => $dados['endereco'] ?? null,
-
                 'cidade' => $dados['cidade'] ?? null,
-
                 'instagram' => $dados['instagram'] ?? null,
-
                 'logo' => $logo,
-
                 'ativo' => true,
-
             ]);
 
+            Assinatura::create([
+                'barbearia_id'      => $barbearia->id,
+                'valor'             => 49.90, // depois podemos pegar do plano
+                'status'            => 'ativa',
+                'inicio'            => now(),
+                'proxima_cobranca'  => now()->addDays(15),
+                'fim'               => null,
+                'gateway'           => 'manual',
+                'gateway_id'        => null,
+            ]);
 
             User::create([
-
                 'name' => $dados['admin_nome'],
-
                 'email' => $dados['admin_email'],
-
                 'password' => Hash::make($dados['admin_password']),
-
                 'role' => User::ROLE_ADMIN,
-
                 'barbearia_id' => $barbearia->id,
-
             ]);
-
 
         });
 

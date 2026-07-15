@@ -76,6 +76,16 @@ Route::prefix('admin')->group(function () {
             '/financeiro',
             [FinanceiroController::class, 'index']
         )->name('admin.financeiro');
+
+        Route::get(
+            '/financeiro/{id}/edit',
+            [FinanceiroController::class, 'edit']
+        )->name('admin.financeiro.edit');
+
+        Route::put(
+            '/financeiro/{id}',
+            [FinanceiroController::class, 'update']
+        )->name('admin.financeiro.update');
     });
 
 });
