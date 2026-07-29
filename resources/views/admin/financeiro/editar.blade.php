@@ -87,7 +87,7 @@
                     <input
                         type="text"
                         class="form-control"
-                        value="{{ ucfirst($barbearia->assinatura->gateway) }}"
+                        value="{{ ucfirst($barbearia->assinatura?->gateway ?? "Não definido") }}"                        
                         readonly
                     >
 
@@ -114,7 +114,7 @@
                         step="0.01"
                         name="valor"
                         class="form-control"
-                        value="{{ old('valor', $barbearia->assinatura->valor) }}"
+                        value="{{ old('valor', $barbearia->assinatura?->valor ?? "Não definido") }}"
                     >
 
                 </div>
@@ -131,22 +131,22 @@
                     >
 
                         <option value="ativa"
-                            {{ $barbearia->assinatura->status == 'ativa' ? 'selected' : '' }}>
+                            {{ $barbearia->assinatura?->status == 'ativa' ? 'selected' : '' }}>
                             Ativa
                         </option>
 
                         <option value="pendente"
-                            {{ $barbearia->assinatura->status == 'pendente' ? 'selected' : '' }}>
+                            {{ $barbearia->assinatura?->status == 'pendente' ? 'selected' : '' }}>
                             Pendente
                         </option>
 
                         <option value="inadimplente"
-                            {{ $barbearia->assinatura->status == 'inadimplente' ? 'selected' : '' }}>
+                            {{ $barbearia->assinatura?->status == 'inadimplente' ? 'selected' : '' }}>
                             Inadimplente
                         </option>
 
                         <option value="cancelada"
-                            {{ $barbearia->assinatura->status == 'cancelada' ? 'selected' : '' }}>
+                            {{ $barbearia->assinatura?->status == 'cancelada' ? 'selected' : '' }}>
                             Cancelada
                         </option>
 
@@ -164,7 +164,7 @@
                         type="date"
                         name="proxima_cobranca"
                         class="form-control"
-                        value="{{ old('proxima_cobranca', optional($barbearia->assinatura->proxima_cobranca)->format('Y-m-d')) }}"
+                        value="{{ old('proxima_cobranca', optional($barbearia->assinatura?->proxima_cobranca)->format('Y-m-d')) }}"
                     >
 
                 </div>
@@ -178,7 +178,7 @@
                     <input
                         type="text"
                         class="form-control"
-                        value="{{ optional($barbearia->assinatura->inicio)->format('d/m/Y') }}"
+                        value="{{ optional($barbearia->assinatura?->inicio)->format('d/m/Y') }}"
                         readonly
                     >
 
@@ -193,7 +193,7 @@
                     <input
                         type="text"
                         class="form-control"
-                        value="{{ optional($barbearia->assinatura->fim)->format('d/m/Y') ?? '-' }}"
+                        value="{{ optional($barbearia->assinatura?->fim)->format('d/m/Y') ?? '-' }}"
                         readonly
                     >
 
@@ -211,7 +211,7 @@
                     id="ativo"
                     name="ativo"
                     value="1"
-                    {{ $barbearia->assinatura->barbearia->ativo ? 'checked' : '' }}
+                    {{ $barbearia->assinatura?->barbearia->ativo ? 'checked' : '' }}
                 >
 
                 <label

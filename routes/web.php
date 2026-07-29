@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BarbeariaController;
 use App\Http\Controllers\Admin\FinanceiroController;
+use App\Http\Controllers\Admin\ConfiguracoesController;
 
 // =========================
 // ADMIN
@@ -86,6 +87,21 @@ Route::prefix('admin')->group(function () {
             '/financeiro/{id}',
             [FinanceiroController::class, 'update']
         )->name('admin.financeiro.update');
+
+        Route::get(
+            '/configuracoes',
+            [ConfiguracoesController::class, 'index']
+        )->name('admin.configuracoes');
+
+        Route::get(
+            '/configuracoes/{id}/edit',
+            [ConfiguracoesController::class, 'edit']
+        )->name('admin.configuracoes.edit');
+
+        Route::put(
+            '/configuracoes/{admin}',
+            [ConfiguracoesController::class, 'update']
+        )->name('admin.configuracoes.update');
     });
 
 });

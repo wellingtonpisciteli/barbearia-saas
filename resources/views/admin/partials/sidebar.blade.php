@@ -70,7 +70,7 @@
         </a>
 
 
-        <a href="#">
+        <a href="{{ route('admin.configuracoes') }}">
 
             <i class="bi bi-gear"></i>
 

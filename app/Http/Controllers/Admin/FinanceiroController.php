@@ -35,56 +35,56 @@ class FinanceiroController extends Controller
     }
 
     public function update(Request $request, int $id)
-{
-    $dados = $request->validate([
+    {
+        $dados = $request->validate([
 
-        'valor' => [
-            'required',
-            'numeric',
-            'min:0',
-        ],
+            'valor' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
 
-        'status' => [
-            'required',
-            'in:ativa,pendente,inadimplente,cancelada',
-        ],
+            'status' => [
+                'required',
+                'in:ativa,pendente,inadimplente,cancelada',
+            ],
 
-        'proxima_cobranca' => [
-            'required',
-            'date',
-        ],
-
-    ]);
-
-
-    DB::transaction(function () use ($dados, $request, $id) {
-
-        $barbearia = Barbearia::with('assinatura')
-            ->findOrFail($id);
-
-
-        $barbearia->assinatura->update([
-
-            'valor' => $dados['valor'],
-
-            'status' => $dados['status'],
-
-            'proxima_cobranca' => $dados['proxima_cobranca'],
+            'proxima_cobranca' => [
+                'required',
+                'date',
+            ],
 
         ]);
 
 
-        $barbearia->update([
+        DB::transaction(function () use ($dados, $request, $id) {
 
-            'ativo' => $request->boolean('ativo'),
-
-        ]);
-
-    });
+            $barbearia = Barbearia::with('assinatura')
+                ->findOrFail($id);
 
 
-    return redirect()
-        ->route('admin.financeiro')
-        ->with('success', 'Assinatura atualizada com sucesso!');
-}
+            $barbearia->assinatura->update([
+
+                'valor' => $dados['valor'],
+
+                'status' => $dados['status'],
+
+                'proxima_cobranca' => $dados['proxima_cobranca'],
+
+            ]);
+
+
+            $barbearia->update([
+
+                'ativo' => $request->boolean('ativo'),
+
+            ]);
+
+        });
+
+
+        return redirect()
+            ->route('admin.financeiro')
+            ->with('success', 'Assinatura atualizada com sucesso!');
+    }
 }
