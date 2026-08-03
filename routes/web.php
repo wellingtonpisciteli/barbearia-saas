@@ -102,6 +102,17 @@ Route::prefix('admin')->group(function () {
             '/configuracoes/{admin}',
             [ConfiguracoesController::class, 'update']
         )->name('admin.configuracoes.update');
+
+        Route::get(
+            '/configuracoes/create',
+            [ConfiguracoesController::class, 'create']
+        )->name('admin.configuracoes.create');
+
+        Route::post(
+            '/configuracoes/store',
+            [ConfiguracoesController::class, 'store']
+        )->name('admin.configuracoes.store');
+        
     });
 
 });

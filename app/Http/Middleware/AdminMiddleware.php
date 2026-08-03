@@ -20,10 +20,6 @@ class AdminMiddleware
                 ->route('admin.login');
         }
 
-        if (auth('admin')->user()->role !== 'superAdmin') {
-            abort(403);
-        }
-
         return $next($request);
     }
 }

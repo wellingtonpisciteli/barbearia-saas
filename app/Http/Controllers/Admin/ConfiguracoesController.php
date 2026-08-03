@@ -57,4 +57,27 @@ class ConfiguracoesController extends Controller
             ->route('admin.configuracoes')
             ->with('success', 'Usuário atualizado com sucesso.');
     }
+
+    public function create()
+    {
+        return view('admin.configuracoes.create');
+    }
+
+    public function store(Request $request)
+    {
+        $dados = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:admins,email',
+            'password' => 'required|confirmed|min:6',
+            'role' => 'required|in:admin,superAdmin',
+        ]);
+
+        $dados['password'] = Hash::make($dados['password']);
+
+        Admin::create($dados);
+
+        return redirect()
+            ->route('admin.configuracoes')
+            ->with('success', 'Usuário cadastrado com sucesso.');
+    }
 }

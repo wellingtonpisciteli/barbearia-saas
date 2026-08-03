@@ -12,65 +12,6 @@
 
 <div class="row g-4">
 
-    {{-- Nome do Sistema --}}
-    <div class="col-12">
-
-        <div class="card shadow-sm border-0">
-
-            <div class="card-header bg-white border-0 pt-4 pb-0">
-
-                <h5 class="mb-1">
-                    Nome do Sistema
-                </h5>
-
-                <small class="text-muted">
-                    Altere o nome exibido em toda a plataforma.
-                </small>
-
-            </div>
-
-            <div class="card-body">
-
-                <form action="#" method="POST">
-
-                    @csrf
-
-                    <div class="row align-items-end">
-
-                        <div class="col-md-8">
-
-                            <label class="form-label">
-                                Nome
-                            </label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                name="nome_sistema"
-                                value="FadeOS"
-                            >
-
-                        </div>
-
-                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-
-                            <button class="btn btn-primary">
-                                <i class="bi bi-check-lg me-1"></i>
-                                Salvar Alterações
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-        </div>
-
-    </div>
-
     {{-- Usuários --}}
     <div class="col-12">
 
@@ -90,13 +31,10 @@
 
                 </div>
 
-                <button class="btn btn-primary">
-
+                <a href="{{ route('admin.configuracoes.create') }}" class="btn btn-primary">
                     <i class="bi bi-person-plus me-1"></i>
-
                     Novo Usuário
-
-                </button>
+                </a>
 
             </div>
 
